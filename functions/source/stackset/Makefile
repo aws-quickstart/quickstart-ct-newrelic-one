@@ -1,8 +1,7 @@
 PROJECT = NewRelicCTStackSet
 DIR_NAME = stackset
 FUNCTION = $(PROJECT)
-DIST_DIR ?= $(BASE)/functions/packages/$(DIR_NAME)
-$(shell mkdir -p $(DIST_DIR))
+DIST_DIR ?= "$(BASE)"/functions/packages/$(DIR_NAME)
 
 all: build
 
@@ -17,7 +16,6 @@ build: clean
 	python3 -m venv build/$(FUNCTION)
 	. build/$(FUNCTION)/bin/activate; \
 	pip3 install  -r requirements.txt; \
-	cp -r $$VIRTUAL_ENV/lib/python3.7/site-packages/ build/
+	cp -r "$$VIRTUAL_ENV"/lib/python3.8/site-packages/ build/
 	cd build/site-packages; zip -g -r $(DIST_DIR)/$(FUNCTION).zip . -x "*__pycache__*"
-	rm -rf build/site-packages
-
+	rm -rf build
