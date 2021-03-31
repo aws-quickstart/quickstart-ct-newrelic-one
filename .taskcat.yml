@@ -1,8 +1,7 @@
 project:
-  name: quickstart-newrelic-ct
+  name: quickstart-ct-new-relic-one
   owner: quickstart@amazon.com
   package_lambda: false
-  s3_bucket: 'tcat-quickstart-newrelic-ct-92lc75zt'
 tests:
   newrelic-onboarding-us-west-2:
     parameters:
@@ -11,8 +10,6 @@ tests:
       NewRelicAccessKey: ''
       StackSetName: 'NewRelic-Integration'
       StackSetUrl: 'https://newrelic-aws-quickstart.s3.amazonaws.com/control-tower/templates/newrelic-stack-set.yml'
-      QSS3BucketName: 'newrelic-aws-quickstart'
-      QSS3KeyPrefix: 'control-tower/'
     regions:
       - us-west-2
-    template: templates/control-tower-customization.yml
+    template: control-tower-customization.yml
