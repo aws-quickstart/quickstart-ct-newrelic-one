@@ -1,0 +1,9 @@
+# General
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+
+# docs
+docs/index.html

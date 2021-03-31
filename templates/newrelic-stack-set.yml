@@ -1,0 +1,205 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Adds in New Relic integration to your aws accounts. Launch as Stack Set in your Control Tower landing zone master account.
+Parameters:
+  NewRelicAccountNumber:
+    Type: String
+    Description: Your Newrelic account number
+    AllowedPattern: '[0-9]+'
+  PolicyName: 
+    Type: String
+    Default: NewRelicIntegrationRole
+    Description: 'Policy name of the policy to use in the Role. If no value is supplied it will use the AWS default ReadOnlyAccess.
+    The default AWS ReadOnlyAccess policy is managed by AWS and automatically gains new permissions as new services are introduced but
+    includes a broad set of permissions which are not required by NewRelic integrations.
+    If a value is supplied a custom policy will be created with the provided name. This custom policy only includes the minimum 
+    required permissions to allow NewRelic to monitor your Lambda functions. Take into account that this policy is not automatically 
+    updated by AWS, and must be managed by you.'
+
+Conditions: 
+  UseCustomPolicy: !Not [!Equals [ !Ref PolicyName, '']]
+  UseDefaultPolicy: !Equals [ !Ref PolicyName, '']
+  
+Resources:
+  NewRelicDefaultPolicyRole:
+    Type: 'AWS::IAM::Role'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "New Relic needs to name IAM roles to help uniquely identify them."
+    Condition: UseDefaultPolicy
+    Properties:
+      ManagedPolicyArns: 
+        - arn:aws:iam::aws:policy/ReadOnlyAccess
+      RoleName: !Join ['_', ['NewRelicIntegrationRole', !Ref NewRelicAccountNumber]]
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: 'arn:aws:iam::754728514883:root'
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': !Ref NewRelicAccountNumber
+
+  NewRelicCustomPolicyRole:
+    Type: 'AWS::IAM::Role'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "New Relic needs to name IAM roles to help uniquely identify them."
+    Condition: UseCustomPolicy
+    Properties:
+      RoleName: !Join ['_', ['NewRelicIntegrationRole', !Ref NewRelicAccountNumber]]
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: 'arn:aws:iam::754728514883:root'
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': !Ref NewRelicAccountNumber
+                
+  NewRelicCustomPolicy:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F5
+            reason: "AWS Support does not support specifying a resource ARN in the Resource element of an IAM policy statement. To allow access to AWS Support, specify “Resource”: “*” in your policy."
+          - id: W13
+            reason: "New Relic needs permissions to read telemetry data from supported services for ALL the AWS resources in the account."
+          - id: W28
+            reason: "New Relic needs to name IAM roles to help uniquely identify them."
+    Condition: UseCustomPolicy
+    Properties:    
+      ManagedPolicyName: !Ref PolicyName
+      Roles:
+        - !Ref NewRelicCustomPolicyRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:      
+              - 'elasticloadbalancing:Describe*'
+              - 'apigateway:GET'
+              - 'apigateway:HEAD'
+              - 'apigateway:OPTIONS'
+              - 'autoscaling:Describe*'
+              - 'budgets:ViewBudget'
+              - 'cloudfront:List*Distributions'
+              - 'cloudfront:ListTagsForResource'
+              - 'cloudtrail:LookupEvents'
+              - 'dynamodb:DescribeLimits'
+              - 'dynamodb:List*Tables'
+              - 'dynamodb:Describe*Table'
+              - 'dynamodb:ListTagsOfResource'
+              - 'ec2:DescribeVolume*'
+              - 'ec2:DescribeInstanceStatus'
+              - 'ec2:DescribeInstances'
+              - 'ecs:ListServices'
+              - 'ecs:DescribeServices'
+              - 'ecs:DescribeClusters'
+              - 'ecs:ListClusters'
+              - 'ecs:ListTagsForResource'
+              - 'elasticfilesystem:DescribeMountTargets'
+              - 'elasticfilesystem:DescribeFileSystems'
+              - 'elasticache:DescribeCacheClusters'
+              - 'elasticache:ListTagsForResource'
+              - 'es:ListDomainNames'
+              - 'es:DescribeElasticsearchDomain*'
+              - 'es:ListTags'
+              - 'elasticbeanstalk:DescribeEnvironments'
+              - 'elasticbeanstalk:DescribeInstancesHealth'
+              - 'elasticbeanstalk:DescribeConfigurationSettings'
+              - 'elasticmapreduce:ListInstances'
+              - 'elasticmapreduce:ListClusters'
+              - 'elasticmapreduce:DescribeCluster'
+              - 'elasticmapreduce:ListInstanceGroups'
+              - 'health:DescribeAffectedEntities'
+              - 'health:DescribeEventDetails'
+              - 'health:DescribeEvents'
+              - 'iam:ListSAMLProviders'
+              - 'iam:ListOpenIDConnectProviders'
+              - 'iam:ListServerCertificates'
+              - 'iam:GetAccountAuthorizationDetails'
+              - 'iam:ListVirtualMFADevices'
+              - 'iam:GetAccountSummary'
+              - 'iot:ListTopicRules'
+              - 'iot:GetTopicRule'
+              - 'iot:ListThings'
+              - 'firehose:DescribeDeliveryStream'
+              - 'firehose:ListDeliveryStreams'
+              - 'kinesis:ListStreams'
+              - 'kinesis:DescribeStream'
+              - 'kinesis:ListTagsForStream'
+              - 'rds:ListTagsForResource'
+              - 'rds:DescribeDBInstances'
+              - 'rds:DescribeDBClusters'
+              - 'route53:ListHealthChecks'
+              - 'route53:GetHostedZone'
+              - 'route53:ListHostedZones'
+              - 'route53:ListResourceRecordSets'
+              - 'route53:ListTagsForResources'
+              - 's3:GetLifecycleConfiguration'
+              - 's3:GetBucketTagging'
+              - 's3:ListAllMyBuckets'
+              - 's3:GetBucketWebsite'
+              - 's3:GetBucketLogging'
+              - 's3:GetBucketCORS'
+              - 's3:GetBucketVersioning'
+              - 's3:GetBucketAcl'
+              - 's3:GetBucketNotification'
+              - 's3:GetBucketPolicy'
+              - 's3:GetReplicationConfiguration'
+              - 's3:GetMetricsConfiguration'
+              - 's3:GetAccelerateConfiguration'
+              - 's3:GetAnalyticsConfiguration'
+              - 's3:GetBucketLocation'
+              - 's3:GetBucketRequestPayment'
+              - 's3:GetEncryptionConfiguration'
+              - 's3:GetInventoryConfiguration'
+              - 's3:GetIpConfiguration'
+              - 'ses:ListConfigurationSets'
+              - 'ses:GetSendQuota'
+              - 'ses:DescribeConfigurationSet'
+              - 'ses:ListReceiptFilters'
+              - 'ses:ListReceiptRuleSets'
+              - 'ses:DescribeReceiptRule'
+              - 'ses:DescribeReceiptRuleSet'
+              - 'sns:GetTopicAttributes'
+              - 'sns:ListTopics'
+              - 'sqs:ListQueues'
+              - 'sqs:ListQueueTags'
+              - 'sqs:GetQueueAttributes'
+              - 'tag:GetResources'
+              - 'ec2:DescribeInternetGateways'
+              - 'ec2:DescribeVpcs'
+              - 'ec2:DescribeNatGateways'
+              - 'ec2:DescribeVpcEndpoints'
+              - 'ec2:DescribeSubnets'
+              - 'ec2:DescribeNetworkAcls'
+              - 'ec2:DescribeVpcAttribute'
+              - 'ec2:DescribeRouteTables'
+              - 'ec2:DescribeSecurityGroups'
+              - 'ec2:DescribeVpcPeeringConnections'
+              - 'ec2:DescribeNetworkInterfaces'
+              - 'ec2:DescribeVpnConnections'
+              - 'redshift:DescribeClusters'
+              - 'redshift:DescribeClusterParameters'
+              - 'lambda:GetAccountSettings'
+              - 'lambda:ListFunctions'
+              - 'lambda:ListAliases'
+              - 'lambda:ListTags'
+              - 'lambda:ListEventSourceMappings'
+              - 'cloudwatch:GetMetricStatistics'
+              - 'cloudwatch:ListMetrics'
+              - 'cloudwatch:GetMetricData'
+              - 'support:*'
+              - 'xray:BatchGet*'
+              - 'xray:Get*'
+            Resource: '*'
