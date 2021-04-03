@@ -4,13 +4,37 @@
 == Test the deployment
 // If steps are required to test the deployment, add them here. If not, remove the heading
 
+Once newly vended AWS Control Tower managed account is enrolled, the solution will automatically setup the IAM role for New Relic Integration. If you include existing AWS accounts in the deployment, you can immediately test and verify the deployment. Verify the deployment result from New Relic console.
+
+* https://one.newrelic.com[Login] to New Relic using your credential.
+* Follow instruction to view your AWS https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/introduction-aws-integrations/#insights[integration]
+
+
 == Post-deployment steps
 // If post-deployment steps are required, add them here. If not, remove the heading
+=== Clean up the Quick Start
+If the Quick Start is no longer needed, follow these steps to clean up the Quick Start AWS CloudFormation stack and stackset deployment.
+
+WARNING: Deleting {partner-product-short-name} Quick Start template will also deletes New Relic IAM roles deployed on all AWS accounts. This Quick Start doesn't support deletion of AWS Integration on New Relic console. Ensure that you also complete the deletion of AWS Integration from New Relic console.
+
+==== Clean up AWS CloudFormation
+
+Time to complete clean up will vary based on how many AWS accounts is included in your {partner-product-name} deployment. CloudFormation stack deletion may timeout and it's safe to retry it.
+
+. Open the AWS CloudFormation console, and delete the {partner-product-name} base stack to clean up all AWS resources deployed by the Stack and StackSet. This action will also delete all StackSet instances, which include IAM role deployed on each linked AWS account. 
+. After base stack is deleted, navigate to AWS CloudFormation https://console.aws.amazon.com/cloudformation/home#/stacksets[StackSet]. Search for New Relic stackset and confirm the StackSet has been deleted.
+
+==== Uninstall New Relic AWS Integration
+
+Ensure that AWS CloudFormation clean up has been completed before you proceed. New Relic IAM roles will be removed by now and you are not required to login to each AWS account to delete it.
+
+* https://one.newrelic.com[Login] to New Relic using your credential.
+* Follow instruction here to https://docs.newrelic.com/docs/infrastructure/install-infrastructure-agent/update-or-uninstall/uninstall-infrastructure-integrations/#uninstall-aws[uninstall AWS integrations]
 
 == Best practices for using {partner-product-short-name} on AWS
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
 
-_Add any best practices for using the software._
+We recommend you only enable monitoring of the AWS services you need to avoid unnecessary costs.
 
 == Security
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
