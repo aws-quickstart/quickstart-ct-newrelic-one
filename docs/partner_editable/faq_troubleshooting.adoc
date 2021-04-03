@@ -2,20 +2,36 @@
 
 == FAQ
 
-*Q.* I encountered a *CREATE_FAILED* error when I launched the Quick Start.
+*Q.* What data analytics capabilities does New Relic provide?
 
-*A.* If AWS CloudFormation fails to create the stack, relaunch the template with *Rollback on failure* set to *Disabled*. This setting is under *Advanced* in the AWS CloudFormation console on the *Configure stack options* page. With this setting, the stack’s state is retained, and the instance keeps running so that you can troubleshoot the issue. (For Windows, look at the log files in `%ProgramFiles%\Amazon\EC2ConfigService` and `C:\cfn\log`.)
-// Customize this answer if needed. For example, if you’re deploying on Linux instances, either provide the location for log files on Linux or omit the final sentence. If the Quick Start has no EC2 instances, revise accordingly (something like "and the assets keep running").
+*A.* New Relic provides a real-time analytics platform that collects metrics, events, logs, and traces directly from your live production software, infrastructure, and services, transforming them into actionable insights about your entire stack, your business, and your customers' experiences.
 
-WARNING: When you set *Rollback on failure* to *Disabled*, you continue to incur AWS charges for this stack. Delete the stack when you finish troubleshooting.
+*Q.* Can I add additional, external data to New Relic?
 
-For more information, see https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html[Troubleshooting AWS CloudFormation^].
+*A.* Yes, New Relic is an open platform, allowing you to send metric, event, log, and trace data from 3rd party instrumentation sources. For example, use custom events to store data in New Relic that is not available during a page view, server transaction or mobile session event. Learn more about how New Relic supports open instrumentation to ingest metrics data from Prometheus, tracing data instrumented with Zipkin, or logs data from Fluentd.
 
-*Q.* I encountered a size-limitation error when I deployed the AWS CloudFormation templates.
+*Q.* What is the data retention period for events I can query?
 
-*A.* Launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template-size limitations. For more information, see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html[AWS CloudFormation quotas^].
+*A.* Data retention varies based on the type of data stored (metrics, events, logs, and traces), and is generally up to you. New Relic has customizable data retention settings, so in some cases you can keep data in New Relic for as long as you want. Prices are determined by the amount of data that you store, so you will want to choose a retention period (where applicable) that meets your business and budgetary needs.
 
+*Q.* Can I extract data from New Relic?
+
+*A.* Exporting data from New Relic is available via New Relic's API or via JSON code provided with each chart, graph and dashboard. Find out more about exporting New Relic data.
+
+*Q.* How much does New Relic cost?
+
+*A.* New Relic pricing is dependent upon which New Relic products you use.  For example, New Relic offers host-based pricing for the New Relic Infrastructure product required for integration with AWS, host-based pricing for APM, number of pageviews for browser, etc..  For more details, contact a https://newrelic.com/about/contact-us[New Relic sales representative]
 
 == Troubleshooting
 
-<Steps for troubleshooting the deployment.>
+. I encountered a *CREATE_FAILED* error when I launched the Quick Start.
+.. If AWS CloudFormation fails to create the stack, relaunch the template with *Rollback on failure* set to *Disabled*. This setting is under *Advanced* in the AWS CloudFormation console on the *Configure stack options* page. With this setting, the stack’s state is retained so that you can troubleshoot the issue. 
+.. Inspect the CloudWatch logs for AWS Lambda function `NewRelicOnboardingFunction` for any potential errors. 
+. I included list of AWS accounts in the deployment, no AWS integration is shown in New Relic Console.
+.. Ensure that your list includes only AWS account ids managed by your AWS Control Tower. 
+.. Ensure that your New Relic NerdGraph user API key is correct and has all the required permission to setup AWS integration. 
+.. Inspect the CloudWatch logs for AWS Lambda function `NewRelicRegisterFunction` for any potential errors.
+. I encountered a size-limitation error when I deployed the AWS CloudFormation templates.
+.. Launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template-size limitations. For more information, see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html[AWS CloudFormation quotas^].
+
+
