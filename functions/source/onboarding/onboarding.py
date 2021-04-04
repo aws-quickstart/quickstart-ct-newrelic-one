@@ -111,7 +111,7 @@ def create(event, context):
 # 2. attempt to delete stackset
 def delete(event, context):
     logger.info("Delete StackSet Instances")
-    deleteWaitTime = 300
+    deleteWaitTime = (int(context.get_remaining_time_in_millis()) - 100)/1000
     deleteSleepTime = 30
     try:
         stackSetName = os.environ['stackSetName']
