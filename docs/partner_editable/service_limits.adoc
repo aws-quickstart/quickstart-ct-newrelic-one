@@ -5,18 +5,18 @@
 // Space needed to maintain table headers
 |AWS CloudFormation Stack |1
 |AWS CloudFormation StackSet |1
-|AWS CloudFormation StackSet instances | 0 - n [1]
-|AWS Lambda |4 [2]
+|AWS CloudFormation StackSet instances | 0 - n [.small]#[1]#
+|AWS Lambda |4 [.small]#[2]#
 |AWS Identity and Access Management (IAM) roles | 4
-|AWS Identity and Access Management (IAM) managed policy | 0 - n [3]
+|AWS Identity and Access Management (IAM) managed policy | 0 - n [.small]#[3]#
 |AWS S3 | 1
 |AWS Secret Manager | 1
 |Amazon Simple Notificaiton Service (SNS) |2
 
 |===
 
-[1] This Quick Start will deploy and maintain StackSet instance for each AWS accounts that you included in the deployment. 
+[.small]#[1] This Quick Start will deploy and maintain StackSet instance for each AWS accounts that you included in the deployment.#
 
-[2] All AWS Lambda deployed in this Quick Start will use unreserved concurrency.
+[.small]#[2] All AWS Lambda deployed in this Quick Start will use unreserved concurrency.#
 
-[3] This Quick Start will deploy IAM role and managed policy for New Relic integration on each AWS accounts that you included in the deployment.
+[.small]#[3] This Quick Start will deploy IAM role and managed policy for New Relic integration on each AWS accounts that you included in the deployment.#

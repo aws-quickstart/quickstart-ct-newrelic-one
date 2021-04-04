@@ -4,7 +4,7 @@
 == Test the deployment
 // If steps are required to test the deployment, add them here. If not, remove the heading
 
-Once newly vended AWS Control Tower managed account is enrolled, the solution will automatically setup the IAM role for New Relic Integration. If you include existing AWS accounts in the deployment, you can immediately test and verify the deployment. Verify the deployment result from New Relic console.
+When newly vended AWS Control Tower managed account is enrolled, the solution will automatically setup the IAM role for New Relic Integration. If you include existing AWS accounts in the deployment, you can immediately test and verify the deployment. Verify the deployment result from New Relic console.
 
 * https://one.newrelic.com[Login] to New Relic using your credential.
 * Follow instruction to view your AWS https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/introduction-aws-integrations/#insights[integration]
@@ -34,14 +34,13 @@ Ensure that AWS CloudFormation clean up has been completed before you proceed. N
 == Best practices for using {partner-product-short-name} on AWS
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
 
-We recommend you only enable monitoring of the AWS services you need to avoid unnecessary costs.
+For complete list of best practices for {partner-product-short-name}, please check https://docs.newrelic.com/docs/new-relic-solutions/best-practices-guides/full-stack-observability/infrastructure-monitoring-best-practices-guide/[Infrastructure monitoring best practices guide]
+
+Please refer to https://docs.newrelic.com/docs/new-relic-solutions/best-practices-guides/[New Relic best practices guides] for complete list of all other best practices guides.
 
 == Security
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
 
-_Add any security-related information._
+To enhance your own security measures, you can use New Relic https://docs.newrelic.com/docs/accounts/accounts/saml-single-sign/saml-service-providers/[SAML single sign-on (SSO) providers], adjust https://docs.newrelic.com/docs/agents/manage-apm-agents/configuration/high-security-mode/[high security mode] settings, and review https://docs.newrelic.com/docs/insights/event-data-sources/default-events/query-account-audit-logs-nrauditevent/[audit logs]. 
 
-== Other useful information
-//Provide any other information of interest to users, especially focusing on areas where AWS or cloud usage differs from on-premises usage.
-
-_Add any other details that will help the customer use the software on AWS._
+Visit https://docs.newrelic.com/docs/security/[New Relic security] for complete detail of New Relic security and privacy.

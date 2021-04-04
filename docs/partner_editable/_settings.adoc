@@ -1,5 +1,5 @@
 // Change the following attributes.
-:quickstart-project-name: quickstart-ct-new-relic-onr
+:quickstart-project-name: quickstart-ct-new-relic-one
 :partner-product-name: New Relic - AWS Control Tower Integration
 // For the following attribute, if you have no short name, enter the same name as partner-product-name.
 :partner-product-short-name: New Relic - AWS Control Tower Integration
@@ -9,9 +9,8 @@
 :doc-year: 2021
 // Uncomment the following "contributor" attributes as appropriate. If the partner agrees to include names, enter contributor names for every line we use. If partner doesn't want to include names, delete all placeholder names and keep only "{partner-company-name}" and "AWS Quick Start team." 
 :partner-contributors: Rohit Kaul, New Relic
-//:other-contributors: Akua Mansa, Trek10
 :aws-contributors: Welly Siauw, AWS Enterprise Support
-:quickstart-contributors: Toni Jones, AWS Quick Start team
+:quickstart-contributors: Shivansh Singh, AWS Quick Start team
 // For deployment_time, use minutes if deployment takes an hour or less, 
 // for example, 30 minutes or 60 minutes. 
 // Use hours for deployment times greater than 60 minutes (rounded to a quarter hour),
@@ -24,4 +23,4 @@
 // :marketplace_subscription:
 // :marketplace_listing_url: https://example.com/
 // Uncomment the following attribute to add a statement about AWS and our stance on compliance-related Quick Starts. 
-// :compliance-statement: Deploying this Quick Start does not guarantee an organization’s compliance with any laws, certifications, policies, or other regulations.  
+:compliance-statement: Deploying this Quick Start does not guarantee an organization’s compliance with any laws, certifications, policies, or other regulations.  

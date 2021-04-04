@@ -15,19 +15,19 @@ Once you subscribed to the solution, follow the email instruction for validation
 
 ==== Prepare for the deployment
 
-**1. New Relic Account number**
+**1. New Relic Account Id**
 
 This Quick Start integrates with single **{partner-company-name} Account Id**. Follow instruction below to collect your account id.
 
 * https://one.newrelic.com[Login] to New Relic using your credential.
-* Follow instruction to find your https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/[{partner-company-name} Account ID]
+* Follow instruction on the link to find your https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/[{partner-company-name} Account ID]
 
 **2. New Relic NerdGraph setup**
 
 For all deployment options, you need to generate {partner-company-name} User API key and enter it as parameter in the Quick Start deployment. This Quick Start uses **{partner-company-name} NerdGraph** for integration between AWS Control Tower and {partner-company-name}. See https://docs.newrelic.com/docs/apis/nerdgraph/get-started/introduction-new-relic-nerdgraph/[Introduction to New Relic NerdGraph] for more detail.
 
 * https://one.newrelic.com[Login] to New Relic using your credential.
-* Follow instruction to https://docs.newrelic.com/docs/apis/get-started/intro-apis/new-relic-api-keys/#user-key-create[create a {partner-company-name} User API key]
+* Follow instruction on the link to https://docs.newrelic.com/docs/apis/get-started/intro-apis/new-relic-api-keys/#user-key-create[create a {partner-company-name} User API key]
 
 **3. Optional: Launch AWS account list**
 

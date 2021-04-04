@@ -2,7 +2,9 @@
 // Briefly describe the software. Use consistent and clear branding. 
 // Include the benefits of using the software on AWS, and provide details on usage scenarios.
 
-The {partner-product-short-name} Quick Start ensures that new AWS accounts enrolled by AWS Control Tower are configured with New Relic Integrations automatically. This will greatly simplify the provisioning of New Relic Integrations in your AWS Control Tower multi-account environment. {partner-product-short-name} let you monitor your AWS data in NRDB. List of specific integrations and the data you can collect can be found at https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[AWS integrations list].
+The {partner-product-short-name} Quick Start ensures that new AWS accounts enrolled by AWS Control Tower are configured with New Relic Integrations automatically. This will greatly simplify the provisioning of New Relic Integrations in your AWS Control Tower multi-account environment. {partner-product-short-name} let you monitor your AWS data in New Relic Database. New Relic Database acts as the single source of truth for all of your operational data.  New Relic One, the industry’s first Observability platform, is built atop NRDB allowing you to manage and visualize that data.
+
+List of specific integrations and the data you can collect can be found at https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[AWS integrations list].
 
 New Relic Integrations for AWS requires IAM cross-account access (delegated using an IAM role and associated managed policy). The IAM role permission permit the New Relic AWS account to retrieve telemetry data from your AWS account. For details on the IAM Role and Policy that supports New Relic Integrations, see https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/integrations-managed-policies[Integrations managed policies]. 
 
