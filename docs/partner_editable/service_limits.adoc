@@ -3,12 +3,20 @@
 |Resource |This deployment uses
 
 // Space needed to maintain table headers
-|VPCs |<n>
-|Elastic IP addresses |<n>
-|Security groups |<n>
-|AWS Identity and Access Management (IAM) roles |<n>
-|Auto Scaling groups |<n>
-|Application Load Balancers |<n>
-|Network Load Balancers |<n>
-|<type> instances |<n>
+|AWS CloudFormation Stack |1
+|AWS CloudFormation StackSet |1
+|AWS CloudFormation StackSet instances | 0 - n [1]
+|AWS Lambda |4 [2]
+|AWS Identity and Access Management (IAM) roles | 4
+|AWS Identity and Access Management (IAM) managed policy | 0 - n [3]
+|AWS S3 | 1
+|AWS Secret Manager | 1
+|Amazon Simple Notificaiton Service (SNS) |2
+
 |===
+
+[1] This Quick Start will deploy and maintain StackSet instance for each AWS accounts that you included in the deployment. 
+
+[2] All AWS Lambda deployed in this Quick Start will use unreserved concurrency.
+
+[3] This Quick Start will deploy IAM role and managed policy for New Relic integration on each AWS accounts that you included in the deployment.
