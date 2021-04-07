@@ -2,7 +2,10 @@
 
 This Quick Start provides two deployment options:
 
-* *Deploy {partner-product-short-name} into a new VPC*. This option builds a new AWS environment consisting of the VPC, subnets, NAT gateways, security groups, bastion hosts, and other infrastructure components. It then deploys {partner-product-short-name} into this new VPC.
-* *Deploy {partner-product-short-name} into an existing VPC*. This option provisions {partner-product-short-name} in your existing AWS infrastructure.
+* *Deploy {partner-product-short-name} with existing AWS accounts*. This option deploy the CloudFormation StackSet, Lambda functions, IAM roles and SNS. It then deploy {partner-product-short-name} into each existing AWS accounts that you specify as parameter. The solution will launch automatically on future newly vended AWS accounts.
 
-The Quick Start provides separate templates for these options. It also lets you configure Classless Inter-Domain Routing (CIDR) blocks, instance types, and {partner-product-short-name} settings, as discussed later in this guide.
+* *Deploy {partner-product-short-name} without existing AWS accounts*. This option deploy the CloudFormation StackSet, Lambda functions, IAM roles and SNS. The solution will launch automatically on future newly vended AWS accounts.
+
+The Quick Start uses single templates for these options. It lets you enter the comma-delimited list of AWS accounts that you wish to include in the launch.
+
+WARNING: This Quick Start is set to enable *all* AWS integration available in New Relic. List of specific integrations and the data can be found at https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[AWS integrations list].

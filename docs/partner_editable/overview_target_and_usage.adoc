@@ -4,4 +4,4 @@
 
 This guide provides instructions for deploying the {partner-product-short-name} Quick Start reference architecture on the AWS Cloud.
 
-This Quick Start is for users who <target audience and usage scenario>
+This Quick Start helps you automate setup of New Relic's AWS integration in your AWS Control Tower managed multi-account environment (landing zone). Once the solution is deployed to your AWS Control Tower management account, any new accounts you enroll in your landing zone are automatically integrated with New Relic. This Quick Start is for developers, builders, devops, cloud admins, system integrators who want to streamline integration of New Relic in your AWS Control Tower multi-account environment.
