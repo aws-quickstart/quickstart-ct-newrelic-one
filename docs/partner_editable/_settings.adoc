@@ -1,8 +1,8 @@
 // Change the following attributes.
 :quickstart-project-name: quickstart-ct-newrelic-one
-:partner-product-name: New Relic - AWS Control Tower Integration
+:partner-product-name: New Relic One Control Tower Integration
 // For the following attribute, if you have no short name, enter the same name as partner-product-name.
-:partner-product-short-name: New Relic - AWS Control Tower Integration
+:partner-product-short-name: New Relic One CT Integration
 // If there's no partner, comment partner-company-name.
 :partner-company-name: New Relic
 :doc-month: April
@@ -15,7 +15,7 @@
 // for example, 30 minutes or 60 minutes. 
 // Use hours for deployment times greater than 60 minutes (rounded to a quarter hour),
 // for example, 1.25 hours, 2 hours, 2.5 hours.
-:deployment_time: 5 minutes (without existing account)
+:deployment_time: 5 minutes
 :default_deployment_region: us-east-1
 :parameters_as_appendix:
 // Uncomment the following two attributes if you are using an AWS Marketplace listing.
