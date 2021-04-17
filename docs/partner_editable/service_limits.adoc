@@ -5,7 +5,7 @@
 // Space needed to maintain table headers
 |AWS CloudFormation Stack |1
 |AWS CloudFormation StackSet |1
-|AWS CloudFormation StackSet instances | 0 - n [.small]#[1]#
+|AWS CloudFormation StackSet instances | 0 - 300 [.small]#[1]#
 |AWS Lambda |4 [.small]#[2]#
 |AWS Identity and Access Management (IAM) roles | 4
 |AWS Identity and Access Management (IAM) managed policy | 0 - n [.small]#[3]#
