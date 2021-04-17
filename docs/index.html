@@ -968,67 +968,7 @@ AWS Cloud.</p>
 <div class="title">Figure 1. New Relic One CT Integration Quick Start Solution diagram</div>
 </div>
 <div class="paragraph">
-<p><a href="#Figure 1">[Figure 1]</a> shows a high-level view of deployment with two worklow. <strong>Workflow A</strong> runs during initial deployment of New Relic One CT Integration. <strong>Workflow B</strong> runs during enrollment of new AWS accounts.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Workflow A</strong></p>
-<div class="ulist">
-<ul>
-<li>
-<p>A1 : CloudFormation <code>control-tower-customization.yml</code> stack launched and deploys all Lambda functions and the required resources. Optional parameter include list of AWS accounts to be included in the first launch.</p>
-</li>
-<li>
-<p>A2 : CloudFormation custom resource calls <code>Onboarding</code> Lambda for the first time, passing all the required parameters.</p>
-</li>
-<li>
-<p>A3 : <code>New Relic Integration StackSet</code> is launched with predefined parameters.</p>
-</li>
-<li>
-<p>A4 : <code>Onboarding Lambda</code> queue the creation of StackSet instance for AWS accounts that included in the first launch.</p>
-</li>
-<li>
-<p>A5 : SNS topic invoke the <code>StackSet</code> Lambda.</p>
-</li>
-<li>
-<p>6 : <code>StackSet</code> Lambda create new StackSet instance.</p>
-</li>
-<li>
-<p>7 : Upon StackSet instance completion, send message to <code>Register</code> SNS topic.</p>
-</li>
-<li>
-<p>8 : <code>Register</code> Lambda retrieves API secret key from AWS Secret Manager and register IAM role to New Relic.</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Workflow B</strong></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>B1 : Admin enroll new or existing AWS account into AWS Control Tower.</p>
-</li>
-<li>
-<p>B2 : <code>CreateManagedAccount</code> AWS Control Tower LifeCycle event triggers the <code>StackSet</code> Lambda</p>
-</li>
-<li>
-<p>6 : <code>StackSet</code> Lambda create new StackSet instance.</p>
-</li>
-<li>
-<p>7 : Upon StackSet instance completion, send message to <code>Register</code> SNS topic.</p>
-</li>
-<li>
-<p>8 : <code>Register</code> Lambda retrieves API secret key from AWS Secret Manager and register IAM role to New Relic.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>On both workflow, <code>Register</code> Lambda is set to enable <strong>all</strong> AWS integration available in New Relic.</p>
+<p>During initial launch of New Relic One CT Integration, the solution deploys the required AWS resources, including additional Lambda function <code>Onboarding</code> that is not shown in the diagram above. If existing AWS accounts are included in deployment, <code>Onboarding</code> lambda function triggers the deployment of StackSet to existing AWS accounts and register it to New Relic One. This solution by default will enable <strong>all</strong> AWS integration available in New Relic One.</p>
 </div>
 </div>
 </div>

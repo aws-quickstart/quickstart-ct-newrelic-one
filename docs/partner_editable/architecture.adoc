@@ -12,25 +12,4 @@ The solution is deployed using AWS CloudFormation templates and integrates with 
 .{partner-product-short-name} Quick Start Solution diagram
 image::../images/newrelic_ct_arch.png[New Relic AWS Control Tower Integration diagram, 100%]
 
-<<Figure 1>> shows a high-level view of deployment with two worklow. **Workflow A** runs during initial deployment of {partner-product-short-name}. **Workflow B** runs during enrollment of new AWS accounts.
-
-* **Workflow A**
-
-** A1 : CloudFormation `control-tower-customization.yml` stack launched and deploys all Lambda functions and the required resources. Optional parameter include list of AWS accounts to be included in the first launch.
-** A2 : CloudFormation custom resource calls `Onboarding` Lambda for the first time, passing all the required parameters.
-** A3 : `New Relic Integration StackSet` is launched with predefined parameters.
-** A4 : `Onboarding Lambda` queue the creation of StackSet instance for AWS accounts that included in the first launch.
-** A5 : SNS topic invoke the `StackSet` Lambda.
-** 6 : `StackSet` Lambda create new StackSet instance.
-** 7 : Upon StackSet instance completion, send message to `Register` SNS topic.
-** 8 : `Register` Lambda retrieves API secret key from AWS Secret Manager and register IAM role to New Relic.
-
-**Workflow B**
-
-** B1 : Admin enroll new or existing AWS account into AWS Control Tower.
-** B2 : `CreateManagedAccount` AWS Control Tower LifeCycle event triggers the `StackSet` Lambda
-** 6 : `StackSet` Lambda create new StackSet instance.
-** 7 : Upon StackSet instance completion, send message to `Register` SNS topic.
-** 8 : `Register` Lambda retrieves API secret key from AWS Secret Manager and register IAM role to New Relic.
-
-On both workflow, `Register` Lambda is set to enable **all** AWS integration available in New Relic.
+During initial launch of {partner-product-short-name}, the solution deploys the required AWS resources, including additional Lambda function `Onboarding` that is not shown in the diagram above. If existing AWS accounts are included in deployment, `Onboarding` lambda function triggers the deployment of StackSet to existing AWS accounts and register it to New Relic One. This solution by default will enable **all** AWS integration available in New Relic One.
