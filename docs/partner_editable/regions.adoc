@@ -1,1 +1,17 @@
-This Quick Start can be deployed in AWS Control Tower supported regions. To see a current list of regions where AWS Control Tower is available, please visit the https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/[AWS Regional Table]. 
+This Quick Start can be deployed in AWS Control Tower supported regions. 
+
+* us-east-1
+* us-east-2
+* us-west-2
+* ap-south-1
+* ap-northeast-1
+* ap-northeast-2
+* ap-southeast-1
+* ap-southeast-2
+* ca-central-1
+* eu-central-1
+* eu-west-1
+* eu-west-2
+* eu-north-1
+
+To see the updated list of regions where AWS Control Tower is available, please visit the https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/[AWS Regional Table]. 
