@@ -12,4 +12,10 @@ The solution is deployed using AWS CloudFormation templates and integrates with 
 .{partner-product-short-name} Quick Start Solution diagram
 image::../images/newrelic_ct_arch.png[New Relic AWS Control Tower Integration diagram, 100%]
 
+* On initial deployment, custom resource using Lambda function launches the CloudFormation StackSet in the management account. The stackset template contains the New Relic IAM cross account role for integration, and which is eventually replicated across any newly vended accounts by other lambda (integration).
+* When Admin enroll new or existing AWS account into AWS Control Tower, AWS Control Tower LifeCycle event triggers the Lambda function to setup the integration
+* Lambda create new StackSet instance for the newly vended account
+* Upon StackSet instance completion, it sends message via SNS that trigger separate Lambda function
+* Registration lambda function calls the NR GraphQL endpoint mutation to link the newly vended aws account with NR account, using the api key secret retrieved from AWS Secret Manager
+
 During initial launch of {partner-product-short-name}, the solution deploys the required AWS resources, including additional Lambda function `Onboarding` that is not shown in the diagram above. If existing AWS accounts are included in deployment, `Onboarding` lambda function triggers the deployment of StackSet to existing AWS accounts and register it to New Relic One. This solution by default will enable **all** AWS integration available in New Relic One.
