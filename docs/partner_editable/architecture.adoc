@@ -8,10 +8,10 @@ Deploying this Quick Start with default parameters builds the following {partner
 .{partner-product-short-name} Quick Start Solution diagram
 image::../images/newrelic-one-ct-integration-arch.png[New Relic AWS Control Tower Integration diagram, 100%]
 
-* Onboarding Lambda function, creates the New Relic StackSet. The stackset template creates the New Relic IAM cross account role for New Relic One integration.
-* Stack SNS topic, to register existing AWS Accounts with New Relic One integration.
-* Admin enroll new or existing AWS accounts into AWS Control Tower, which generates LifeCycle event.
-*  LifeCycle event triggers New Relic StackSet Lambda function via EventBridge rule, to setup the New Relic One integrations.
-* New Relic StackSet Lambda function creates new StackSet Instance.
-* Upon New Relic StackSet instance completion, New Relic StackSet function trigger New Relic Register function via SNS.
-* Register function calls the New Relic NerdGraph endpoint mutation to link the newly vended AWS account with New Relic Account, using the New Relic NerdGraph API Key secret retrieved from AWS Secret Manager.
+* An administrator enrolls new or existing AWS accounts in AWS Control Tower, which generates a life-cycle event.
+* A life-cycle event that triggers the New Relic StackSet Lambda function via an Amazon EventBridge rule.
+* A New Relic StackSet Lambda function that triggers the New Relic register function via Amazon Simple Notification Service (Amazon SNS).
+* A dead letter queue that [complete this sentence].
+* A NerdGraph API key secret, retrieved from AWS Secrets Manager (not shown). The register function calls the New Relic NerdGraph endpoint to link your AWS account with your New Relic account.
+* An onboarding Lambda function that creates the stack SNS topic and New Relic StackSet. The StackSet template creates the New Relic IAM cross-account role.
+* A stack SNS topic that registers existing AWS accounts with the {partner-product-short-name}.
