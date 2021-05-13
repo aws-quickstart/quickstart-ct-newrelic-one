@@ -64,6 +64,7 @@ Parameters:
     Default: NewRelic-Integration
   StackSetUrl:
     Type: String
+    Default: https://aws-quickstart.s3.amazonaws.com/quickstart-ct-newrelic-one/templates/newrelic-stack-set.yml
     Description: NewRelic CT Integration StackSet template URL
   QSS3BucketName:
     Type: String
@@ -85,9 +86,9 @@ Resources:
       SourceBucket: !Ref 'QSS3BucketName'
       Prefix: !Ref 'QSS3KeyPrefix'
       Objects:
-        - 'lambda_packages/NewRelicCTOnboarding.zip'
-        - 'lambda_packages/NewRelicCTRegister.zip'
-        - 'lambda_packages/NewRelicCTStackSet.zip'
+        - 'functions/packages/onboarding/NewRelicCTOnboarding.zip'
+        - 'functions/packages/register/NewRelicCTRegister.zip'
+        - 'functions/packages/stackset/NewRelicCTStackSet.zip'
 
   CopyZipsRole:
     Type: AWS::IAM::Role
@@ -186,7 +187,7 @@ Resources:
     Properties:
       Code:
         S3Bucket: !Ref LambdaZipsBucket
-        S3Key: !Join ['', [!Ref 'QSS3KeyPrefix', 'lambda_packages/NewRelicCTOnboarding.zip']]
+        S3Key: !Join ['', [!Ref 'QSS3KeyPrefix', 'functions/packages/onboarding/NewRelicCTOnboarding.zip']]
       Handler: onboarding.lambda_handler
       Runtime: python3.7
       Timeout: 120
@@ -366,7 +367,7 @@ Resources:
     Properties:
       Code:
         S3Bucket: !Ref LambdaZipsBucket
-        S3Key: !Join ['', [!Ref 'QSS3KeyPrefix', 'lambda_packages/NewRelicCTStackSet.zip']]
+        S3Key: !Join ['', [!Ref 'QSS3KeyPrefix', 'functions/packages/stackset/NewRelicCTStackSet.zip']]
       Handler: stackset.lambda_handler
       Runtime: python3.7
       Timeout: 120
@@ -441,7 +442,7 @@ Resources:
     Properties:
       Code:
         S3Bucket: !Ref LambdaZipsBucket
-        S3Key: !Join ['', [!Ref 'QSS3KeyPrefix', 'lambda_packages/NewRelicCTRegister.zip']]
+        S3Key: !Join ['', [!Ref 'QSS3KeyPrefix', 'functions/packages/register/NewRelicCTRegister.zip']]
       Handler: register.lambda_handler
       Runtime: python3.7
       Timeout: 120
