@@ -1,5 +1,5 @@
 // Edit this placeholder text to accurately describe your architecture.
 
-This Quick Start provides deployment using a CloudFormation templates. You can optionally enter the comma-delimited list of AWS accounts that you wish to include during the launch as parameter in the template.
+This Quick Start provides AWS CloudFormation templates that automate the deployment. Optionally, to deploy this Quick Start to more than one AWS account, add a comma-delimited list of AWS accounts to the template.
 
-WARNING: This Quick Start is set to enable *all* AWS integration available in New Relic. List of specific integrations and the data can be found at https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[AWS integrations list].
+WARNING: By default, this Quick Start enables all AWS integrations that are available for New Relic. For a list of included integrations and data, see https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[Amazon integrations^].

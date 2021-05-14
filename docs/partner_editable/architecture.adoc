@@ -8,7 +8,7 @@ Deploying this Quick Start with default parameters builds the following {partner
 .{partner-product-short-name} Quick Start Solution diagram
 image::../images/newrelic-one-ct-integration-arch.png[New Relic AWS Control Tower Integration diagram, 100%]
 
-* An administrator enrolls new or existing AWS accounts in AWS Control Tower, which generates a life-cycle event.
+* An administrator who enrolls new or existing AWS accounts in AWS Control Tower, which generates a life-cycle event.
 * A life-cycle event that triggers the New Relic StackSet Lambda function via an Amazon EventBridge rule.
 * A New Relic StackSet Lambda function that triggers the New Relic register function via Amazon Simple Notification Service (Amazon SNS).
 * A dead letter queue that [complete this sentence].
