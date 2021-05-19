@@ -28,7 +28,7 @@ Each deployment takes about {deployment_time} to complete. Note that the deploym
 
 . Sign in to your AWS Control Tower management account, and choose the link below to launch the AWS CloudFormation template. For help with choosing an option, see link:#_deployment_options[Deployment options], earlier in this guide.
 
-** https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=NewRelic-AWS-ControlTower-Integration&templateURL=https://wellsiau-quickstart.s3.amazonaws.com/newrelic/templates/control-tower-customization.yml[Create AWS CloudFormation stack.]
+** https://fwd.aws/zJYx9[Create AWS CloudFormation stack.]
 
 . Check the AWS Region displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where AWS Control Tower deploys. For other Regrions, see link:#_supported_regions[Supported Regions], earlier in this guide.
 
