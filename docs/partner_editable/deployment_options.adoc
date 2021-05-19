@@ -1,11 +1,5 @@
 // Edit this placeholder text to accurately describe your architecture.
 
-This Quick Start provides two deployment options:
+This Quick Start provides AWS CloudFormation templates that automate the deployment. Optionally, to deploy this Quick Start to more than one AWS account, add a comma-delimited list of AWS accounts to the template.
 
-* *Deploy {partner-product-short-name} with existing AWS accounts*. This option deploy the CloudFormation StackSet, Lambda functions, IAM roles and SNS. It then deploy {partner-product-short-name} into each existing AWS accounts that you specify as parameter. The solution will launch automatically on future newly vended AWS accounts.
-
-* *Deploy {partner-product-short-name} without existing AWS accounts*. This option deploy the CloudFormation StackSet, Lambda functions, IAM roles and SNS. The solution will launch automatically on future newly vended AWS accounts.
-
-The Quick Start uses single templates for these options. It lets you enter the comma-delimited list of AWS accounts that you wish to include in the launch.
-
-WARNING: This Quick Start is set to enable *all* AWS integration available in New Relic. List of specific integrations and the data can be found at https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[AWS integrations list].
+WARNING: By default, this Quick Start enables all AWS integrations that are available for New Relic. For a list of included integrations and data, see https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[Amazon integrations^].
