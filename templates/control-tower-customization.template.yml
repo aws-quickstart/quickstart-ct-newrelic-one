@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Control Tower customization that adds in New Relic integration to your aws accounts enrolled using AWS Control Tower.
+Description: Control Tower customization that adds in New Relic integration to your aws accounts enrolled using AWS Control Tower.(qs-1rsuloqd4)
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying New Relic"

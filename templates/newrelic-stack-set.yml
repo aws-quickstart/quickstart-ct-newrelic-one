@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Adds in New Relic integration to your aws accounts. Launch as Stack Set in your Control Tower landing zone master account.
+Description: Adds in New Relic integration to your aws accounts. Launch as Stack Set in your Control Tower landing zone master account.(qs-1rsulpe1p)
 Parameters:
   NewRelicAccountNumber:
     Type: String
