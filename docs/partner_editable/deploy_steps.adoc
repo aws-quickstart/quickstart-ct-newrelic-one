@@ -20,11 +20,11 @@ endif::marketplace_subscription[]
 
 === Launch the Quick Start
 // Adapt the following warning to your Quick Start.
-WARNING: If you’re deploying {partner-product-short-name} into an existing AWS accounts, make sure that your AWS accounts has been enrolled into AWS Control Tower. This Quick Start doesn't support deployment into AWS accounts from other AWS organization outside your existing AWS Control Tower organization id. Ensure that list of existing AWS accounts are formatted as comma-delimited list, i.e.: `account_id_1,account_id_2,account_id_3`. 
+WARNING: If you intend to enroll existing AWS accounts into {partner-product-short-name}, make sure that your AWS accounts have been enrolled into AWS Control Tower. This Quick Start doesn't support enrolling AWS accounts from AWS organization outside of your existing AWS Control Tower organization. Ensure that list of existing AWS accounts are formatted as comma-delimited string, i.e.: `account_id1,account_id2,account_id3`. 
 
 Each deployment takes about {deployment_time} to complete. If you include existing AWS accounts in the deployment, budget for additional time to complete the deployment.
 
-. Sign in to your AWS Control Tower management account, and choose the link below to launch the AWS CloudFormation template. For help with choosing an option, see link:#_deployment_options[Deployment options] earlier in this guide.
+. Sign in to your AWS Control Tower management account, and choose the link below to launch the AWS CloudFormation template as a Stack. For help with choosing an option, see link:#_deployment_options[Deployment options] earlier in this guide.
 
 ** https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=NewRelic-AWS-ControlTower-Integration&templateURL=https://wellsiau-quickstart.s3.amazonaws.com/newrelic/templates/control-tower-customization.yml[CloudFormation Create Stack Link]
 

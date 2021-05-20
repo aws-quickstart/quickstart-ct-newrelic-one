@@ -1,6 +1,3 @@
 // Include details about any licenses and how to sign up. Provide links as appropriate. If no licenses are required, clarify that. The following paragraphs provide examples of details you can provide. Remove italics, and rephrase as appropriate.
 
-This {partner-product-short-name} Quick Start requires an active New Relic account with https://newrelic.com/products/infrastructure/pricing[Infrastructure Pro] enabled. Please refer to options below to get your license.
-
-* Subscribe New Relic from https://aws.amazon.com/marketplace/seller-profile?id=cea9ae0f-34a2-4b53-aabf-5cf5c2c67938[AWS Marketplace]
-* Register for New Relic https://newrelic.com/signup[free tier access] to get started. 
+This {partner-product-short-name} Quick Start requires an active New Relic account with https://newrelic.com/products/infrastructure/pricing[Infrastructure Pro] enabled. 

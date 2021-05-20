@@ -1,17 +1,15 @@
 :xrefstyle: short
 
-// Replace this example diagram with your own. Follow our wiki guidelines: https://w.amazon.com/bin/view/AWS_Quick_Starts/Process_for_PSAs/#HPrepareyourarchitecturediagram. Upload your source PowerPoint file to the GitHub {deployment name}/docs/images/ directory in this repo. 
-
 Deploying this Quick Start with default parameters builds the following {partner-product-short-name} in the AWS Control Tower environment on the AWS Cloud.
 
 [#NewRelic-CT-arch]
 .{partner-product-short-name} Quick Start Solution diagram
 image::../images/newrelic-one-ct-integration-arch.png[New Relic AWS Control Tower Integration diagram, 100%]
 
-* An administrator enrolls new or existing AWS accounts in AWS Control Tower, which generates a life-cycle event.
-* A life-cycle event that triggers the New Relic StackSet Lambda function via an Amazon EventBridge rule.
-* A New Relic StackSet Lambda function that triggers the New Relic register function via Amazon Simple Notification Service (Amazon SNS).
-* A dead letter queue that [complete this sentence].
-* A NerdGraph API key secret, retrieved from AWS Secrets Manager (not shown). The register function calls the New Relic NerdGraph endpoint to link your AWS account with your New Relic account.
-* An onboarding Lambda function that creates the stack SNS topic and New Relic StackSet. The StackSet template creates the New Relic IAM cross-account role.
-* A stack SNS topic that registers existing AWS accounts with the {partner-product-short-name}.
+* An administrator enrolls new or existing AWS accounts in AWS Control Tower, which generates a https://docs.aws.amazon.com/controltower/latest/userguide/lifecycle-events.html[lifecycle event].
+* A lifecycle event triggers the "New Relic StackSet" Lambda function via an Amazon EventBridge rule.
+* "New Relic StackSet" Lambda function  triggers the "New Relic Register" Lambda function via Amazon Simple Notification Service (Amazon SNS) topic "register".
+* A dead letter queue collects any messages that the "New Relic Register" Lambda function failed to process.
+* A NerdGraph API key secret is retrieved from AWS Secrets Manager (not shown). The "New Relic Register" Lambda function calls the New Relic NerdGraph mutation endpoint to link your AWS account with your New Relic account.
+* "New Relic Onboarding" Lambda function creates the "New Relic" StackSet. The StackSet includes the New Relic cross-account trust IAM role.
+* "New Relic Onboarding" Lambda function then triggers the "New Relic StackSet" Lambda function via the Amazon SNS topic "stackset". "New Relic StackSet" Lambda function then launches the stack set instances in all the accounts that were passed when launching the Quick Start via the provided CloudFormation template.
