@@ -22,9 +22,7 @@ endif::marketplace_subscription[]
 
 === Launch the Quick Start
 // Adapt the following warning to your Quick Start.
-WARNING: If you deploy {partner-product-short-name} into an existing AWS account, ensure your AWS account is enrolled in AWS Control Tower. This Quick Start does not support deployments into accounts from organizations outside of AWS. Ensure that your list of existing AWS accounts are comma delimited (for example, `account_id_1,account_id_2,account_id_3`). 
-
-Each deployment takes about {deployment_time} to complete. Note that the deployment time is greater if you deploy this Quick Start in an existing AWS account.
+WARNING: If you intend to enroll existing AWS accounts into {partner-product-short-name}, make sure that your AWS accounts have been enrolled into AWS Control Tower. This Quick Start doesn't support enrolling AWS accounts from AWS organization outside of your existing AWS Control Tower organization. Ensure that list of existing AWS accounts are formatted as comma-delimited string, i.e.: `account_id1,account_id2,account_id3`. 
 
 . Sign in to your AWS Control Tower management account, and choose the link below to launch the AWS CloudFormation template. For help with choosing an option, see link:#_deployment_options[Deployment options], earlier in this guide.
 

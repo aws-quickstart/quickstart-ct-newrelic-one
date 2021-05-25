@@ -1,11 +1,8 @@
-// Replace the content in <>
-// Briefly describe the software. Use consistent and clear branding. 
-// Include the benefits of using the software on AWS, and provide details on usage scenarios.
+The {partner-product-short-name} Quick Start allows you to streamline the observability
+of your AWS accounts with New Relic. With this solution, whenever a new AWS account is enrolled,
+it's automatically integrated with your New Relic account using the https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/introduction-aws-integrations/[New Relic AWS integrations]. You can then manage all your AWS operational data and insights from one place, with
+no need to hop back and forth between multiple AWS accounts or other set of observability tools.
 
-The {partner-product-short-name} Quick Start helps to ensure that new AWS accounts enrolled by AWS Control Tower are integrated with New Relic. {partner-product-short-name} allows you to monitor your AWS data in the New Relic database, which acts as a single source of truth for operational data. {partner-product-short-name} is built atop NRDB, which allows you to manage and visualize data.
+New Relic AWS integrations require you to grant New Relic permission to read operational telemetry data from your AWS account. This is achieved by using an AWS IAM role, referred to as “New Relic Integration”, that uses https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html[AWS IAM cross-account access]. New Relic AWS integrations uses the Amazon CloudWatch API to collect telemetry data for the AWS services you monitor. For details on the IAM Role and Policy that supports these integrations, see https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/integrations-managed-policies[Integrations managed policies]. 
 
-For a list of integrations and data you can collect, see https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[Amazon integrations^].
-
-{partner-product-short-name} integrations for AWS must be delegated using an IAM role and associated managed policy. IAM role permissions permit the {partner-product-short-name} AWS account to retrieve telemetry data from your AWS account. For more information, see https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/integrations-managed-policies[Integrations and managed policies^]. 
-
-If you are new to New Relic One, see the https://newrelic.com/platform[New Relic One platform^]. 
+If you are new to New Relic One, please refer to https://newrelic.com[New Relic One] to learn about it.

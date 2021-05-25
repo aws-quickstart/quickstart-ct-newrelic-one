@@ -1,6 +1,1 @@
-// Replace the content in <>
-// For example: “familiarity with basic concepts in networking, database operations, and data encryption” or “familiarity with <software>.”
-// Include links if helpful. 
-// You don't need to list AWS services or point to general info about AWS; the boilerplate already covers this.
-
-This Quick Start assumes that you are familiar with https://aws.amazon.com/controltower/[AWS Control Tower^]. For information about setting up an AWS Control Tower landing zone, see https://docs.aws.amazon.com/controltower/latest/userguide/getting-started-with-control-tower.html[Getting Started with AWS Control Tower^]. 
+This Quick Start assumes familiarity with https://aws.amazon.com/controltower/[AWS Control Tower]. For information about AWS Control Tower, see https://docs.aws.amazon.com/controltower/latest/userguide/getting-started-with-control-tower.html[Getting Started with AWS Control Tower] in the AWS Control Tower User Guide. 
