@@ -5,7 +5,7 @@
 // Space needed to maintain table headers
 |AWS CloudFormation stacks | 1
 |AWS CloudFormation StackSets | 1
-|AWS CloudFormation StackSet instances | 0–300 [.small]#[1]#
+|AWS CloudFormation StackSet instances | 0–300^1^
 |AWS Lambda functions| 4 [.small]#[2]#
 |IAM roles | 4
 |IAM managed policies | 1 [.small]#[3]#
@@ -15,7 +15,7 @@
 
 |===
 
-[.small]#[1] This Quick Start deploys and maintains StackSet instances for each AWS account that you include in the deployment.#
+^1^ This Quick Start deploys and maintains StackSet instances for each AWS account that you include in the deployment.#
 
 [.small]#[2] All AWS Lambda functions deployed by this Quick Start use unreserved concurrency.#
 
