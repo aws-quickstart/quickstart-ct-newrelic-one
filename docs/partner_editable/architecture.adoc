@@ -7,9 +7,8 @@ Deploying this Quick Start with default parameters builds the following {partner
 image::../images/newrelic-one-ct-integration-arch.png[New Relic AWS Control Tower Integration diagram, 100%]
 
 * An administrator enrolls new or existing AWS accounts in AWS Control Tower, which generates a https://docs.aws.amazon.com/controltower/latest/userguide/lifecycle-events.html[lifecycle event].
-* A lifecycle event triggers the "New Relic StackSet" Lambda function via an Amazon EventBridge rule.
-* "New Relic StackSet" Lambda function  triggers the "New Relic Register" Lambda function via Amazon Simple Notification Service (Amazon SNS) topic "register".
-* A dead letter queue collects any messages that the "New Relic Register" Lambda function failed to process.
-* A NerdGraph API key secret is retrieved from AWS Secrets Manager (not shown). The "New Relic Register" Lambda function calls the New Relic NerdGraph mutation endpoint to link your AWS account with your New Relic account.
-* "New Relic Onboarding" Lambda function creates the "New Relic" StackSet. The StackSet includes the New Relic cross-account trust IAM role.
-* "New Relic Onboarding" Lambda function then triggers the "New Relic StackSet" Lambda function via the Amazon SNS topic "stackset". "New Relic StackSet" Lambda function then launches the stack set instances in all the accounts that were passed when launching the Quick Start via the provided CloudFormation template.
+* A lifecycle event triggers the New Relic StackSet Lambda function via an Amazon EventBridge rule.
+* The New Relic StackSet Lambda function triggers the New Relic register Lambda function via Amazon Simple Notification Service (Amazon SNS).
+* A dead letter queue collects messages that the New Relic register Lambda function fails to process.
+* A NerdGraph API key secret is retrieved from AWS Secrets Manager (not shown). The New Relic Register Lambda function calls the New Relic NerdGraph mutation endpoint to link your AWS account with your New Relic account.
+* A New Relic onboarding Lambda function creates the New Relic StackSet, which includes a cross-account IAM role. This Lambda function then triggers the New Relic StackSet Lambda function via the Amazon SNS StackSet topic. The New Relic StackSet Lambda function launches the stack set instances in all accounts that were set up by the AWS CloudFormation template.

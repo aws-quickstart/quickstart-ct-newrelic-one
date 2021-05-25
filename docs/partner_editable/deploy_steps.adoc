@@ -22,14 +22,12 @@ endif::marketplace_subscription[]
 
 === Launch the Quick Start
 // Adapt the following warning to your Quick Start.
-WARNING: If you intend to enroll existing AWS accounts into {partner-product-short-name}, make sure that your AWS accounts have been enrolled into AWS Control Tower. This Quick Start doesn't support enrolling AWS accounts from AWS organization outside of your existing AWS Control Tower organization. Ensure that list of existing AWS accounts are formatted as comma-delimited string, i.e.: `account_id1,account_id2,account_id3`. 
+WARNING: If you intend to enroll existing AWS accounts into {partner-product-short-name}, ensure that your AWS accounts are enrolled in AWS Control Tower. This Quick Start does not support enrolling AWS accounts from organizationa from outside of your existing AWS Control Tower organization. Ensure that your list of existing AWS accounts are formatted as a comma-delimited string (for example, `account_id1,account_id2,account_id3`). 
 
-. Sign in to your AWS Control Tower management account, and choose the link below to launch the AWS CloudFormation template. For help with choosing an option, see link:#_deployment_options[Deployment options], earlier in this guide.
+. Sign in to your AWS Control Tower management account, and launch the AWS CloudFormation template using the following link:
 
 ** https://fwd.aws/zJYx9[Create AWS CloudFormation stack.]
 
-. Check the AWS Region displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where AWS Control Tower deploys. For other Regrions, see link:#_supported_regions[Supported Regions], earlier in this guide.
+. Check the AWS Region displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where AWS Control Tower deploys. For other Regions, see link:#_supported_regions[Supported Regions], earlier in this guide. Choose *Next*.
 
-. Choose *Next*.
-
-. On the *Specify stack details* page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary. For details about each parameter, see the link:#_parameter_reference[Parameter reference] section of this guide. When you finish reviewing and customizing the parameters, choose *Next*.
+. On the *Specify stack details* page, change the stack name if needed. Review the parameters for the template, and provide values for any parameters that require input. For all other parameters, review the default settings and customize them as necessary. For details about each parameter, see the link:#_parameter_reference[Parameter reference] section. When you finish reviewing and customizing the parameters, choose *Next*.

@@ -15,8 +15,8 @@
 
 |===
 
-[.small]#[1] This Quick Start will deploy and maintain StackSet instances for each AWS account that you included in the deployment.#
+[.small]#[1] This Quick Start deploys and maintains StackSet instances for each AWS account that you include in the deployment.#
 
-[.small]#[2] All AWS Lambda functions deployed by this Quick Start will use unreserved concurrency.#
+[.small]#[2] All AWS Lambda functions deployed by this Quick Start use unreserved concurrency.#
 
-[.small]#[3] This Quick Start will deploy the cross-account trust IAM role and associated managed policy for New Relic integration on each AWS account that you included in the deployment.#
+[.small]#[3] This Quick Start deploys a cross-account trust IAM role and associated managed policy for {partner-product-short-name} on each AWS account that you include in the deployment.#
