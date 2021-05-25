@@ -2,30 +2,28 @@
 
 ==== Prepare your AWS Control Tower account
 
-Fully deployed AWS Control Tower is required for this solution to work. For information about setting up an AWS Control Tower landing zone, follow the instructions from https://docs.aws.amazon.com/controltower/latest/userguide/getting-started-with-control-tower.html[Getting Started with AWS Control Tower] in the AWS Control Tower User Guide. 
+AWS Control Tower must be deployed prior to launching this Quick Start. For information about setting up an AWS Control Tower landing zone, see https://docs.aws.amazon.com/controltower/latest/userguide/getting-started-with-control-tower.html[Getting Started with AWS Control Tower^]. 
 
 ==== Prepare your {partner-company-name} account
 
-An active New Relic account with Standard or higher pricing tier subscription, when using
-the https://docs.newrelic.com/docs/accounts/accounts-billing/new-relic-one-pricing-users/pricing-billing[New Relic One pricing plan]. Don’t have an account yet? https://aws.amazon.com/marketplace/pp/B08L5FQMTG[Sign up] for a perpetually free access to New Relic, which includes 100 GB of data ingest per month, one full access user and unlimited basic users. With your New Relic One pay-as-you-go plan, you only pay for what you use beyond the free tier each month.
+When using the https://docs.newrelic.com/docs/accounts/accounts-billing/new-relic-one-pricing-users/pricing-billing[New Relic One pricing plan^], you must have an active New Relic account that is subscribed to a standard or higher pricing tier. With a pay-as-you-go plan, you pay only for what you use beyond the free tier (100 GB) each month.
 
 ==== Prepare for the deployment
 
-**1. New Relic account ID**
+. New Relic account ID
 
-This Quick Start integrates your landing zone with a single **{partner-company-name}** account.
-https://one.newrelic.com[Login] to your {partner-company-name} account and follow instructions to find your https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/[{partner-company-name} account ID]
+This Quick Start integrates your landing zone with a single {partner-company-name} account. https://one.newrelic.com[Log in to your {partner-company-name} account]. For more information, see https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/[Account ID^].
 
-**2. New Relic NerdGraph API key**
+. New Relic NerdGraph API key
 
-For all deployment options, you need to generate {partner-company-name} User API key and enter it as parameter in the Quick Start deployment. This Quick Start uses **{partner-company-name} NerdGraph** for integration between AWS Control Tower and {partner-company-name}. See https://docs.newrelic.com/docs/apis/nerdgraph/get-started/introduction-new-relic-nerdgraph/[Introduction to New Relic NerdGraph] for more details.
+For all deployment options, generate a {partner-company-name} API key, and enter it as parameter in the deployment. This Quick Start integrates {partner-company-name} NerdGraph with AWS Control Tower and {partner-company-name}. For more information, see https://docs.newrelic.com/docs/apis/nerdgraph/get-started/introduction-new-relic-nerdgraph/[Introduction to New Relic NerdGraph, our GraphQL API^].
 
-https://one.newrelic.com[Login] to your New Relic account and follow instructions to https://docs.newrelic.com/docs/apis/get-started/intro-apis/new-relic-api-keys/#user-key-create[create a {partner-company-name} User API key]
+https://one.newrelic.com[Log in to your {partner-company-name} account]. For more information, see https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/[Account ID^].
 
-. **Optional: Launch AWS account list**
+. (Optional) Launch an AWS account list
 
 If you have existing AWS accounts that are managed by AWS Control Tower, deploy this Quick Start into all of your accounts by adding a comma-delimited list of AWS account IDs.
 
-* Log in to your AWS Control Tower management account.
-* For a list of your managed accounts, navigate to https://console.aws.amazon.com/controltower/home/accounts?[AWS Control Tower^].
-* Add all of the AWS account IDs you want to include.
+* Log in to an AWS Control Tower–management account.
+* For a list of managed accounts, navigate to https://console.aws.amazon.com/controltower/home/accounts?[AWS Control Tower^].
+* Add your AWS account IDs.

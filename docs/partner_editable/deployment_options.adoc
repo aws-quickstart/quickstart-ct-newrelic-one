@@ -1,4 +1,4 @@
 
-This Quick Start can be deployed as   CloudFormation stack in your Control Tower management account.
+This Quick Start can be deployed as an AWS CloudFormation stack in your AWS Control Tower management account.
 
-WARNING: This Quick Start is set to enable *all* AWS integrations available in New Relic. List of various integrations and the data can be found at https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[AWS integrations list].
+WARNING: This Quick Start enables all AWS integrations that are available in New Relic. For a list of integrations and data, see https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[AWS integrations^].

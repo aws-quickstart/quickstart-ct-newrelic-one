@@ -8,7 +8,7 @@ When you enroll a new AWS Control Tower–managed account, the deployment sets u
 == Cleanup
 If you intend to deploy the Quick Start for testing and demonstration purposes and you don’t intend to use New Relic AWS integrations any longer, you can follow these steps to remove the AWS CloudFormation stack, that was created as a result of deployment.
 
-WARNING: Deleting the {partner-product-short-name} Quick Start stack and stack sets also deletes the New Relic IAM roles deployed in your AWS accounts, essentially removing the cross-account trust with New Relic. This Quick Start does not, however, remove the account linkage from New Relic. To remove the account from New Relic, see https://docs.newrelic.com/docs/infrastructure/install-infrastructure-agent/update-or-uninstall/uninstall-infrastructure-integrations/#uninstall-aws[Uninstall AWS integrations]. 
+WARNING: Deleting the {partner-product-short-name} Quick Start stack and StackSets also deletes the New Relic IAM roles deployed in your AWS accounts, which removes cross-account trust with New Relic. This Quick Start does not, however, remove account links to New Relic. To remove the account from New Relic, see the *Uninstall the new Relic integration* section. 
 
 === Remove the AWS CloudFormation stack
 
@@ -23,14 +23,14 @@ The time to complete this step depends on how many AWS accounts are included in 
 After you confirm that the AWS CloudFormation stack was removed, remove all enrolled accounts from New Relic.
 
 * https://one.newrelic.com[Log in^] to your New Relic account.
-* To uninstall the AWS integration from New Relic, see https://docs.newrelic.com/docs/infrastructure/install-infrastructure-agent/update-or-uninstall/uninstall-infrastructure-integrations/#uninstall-aws[Uninstall AWS integrations].
+* To uninstall the AWS integration from New Relic, see https://docs.newrelic.com/docs/infrastructure/install-infrastructure-agent/update-or-uninstall/uninstall-infrastructure-integrations/#uninstall-aws[Uninstall infrastructure integrations^].
 
 == Best practices for using {partner-product-short-name} on AWS
 
 For a list of best practices for {partner-product-short-name}, see the https://docs.newrelic.com/docs/new-relic-solutions/best-practices-guides/full-stack-observability/infrastructure-monitoring-best-practices-guide/[Infrastructure monitoring best practices guide^].
 
-For further guidance, see https://docs.newrelic.com/docs/new-relic-solutions/best-practices-guides/[Best practices guides^].
+For more information, see https://docs.newrelic.com/docs/new-relic-solutions/best-practices-guides/[Best practices guides^].
 
 == Security
 
-To enhance your security, see New Relic's https://docs.newrelic.com/docs/accounts/accounts/saml-single-sign/saml-service-providers/[Intro to authentication (SAML SSO) for users on original user model^]. Modify the https://docs.newrelic.com/docs/agents/manage-apm-agents/configuration/high-security-mode/[high-security mode^] settings, and review the https://docs.newrelic.com/docs/insights/event-data-sources/default-events/query-account-audit-logs-nrauditevent/[audit logs]. For more information about New Relic security measures, see https://docs.newrelic.com/docs/security/[Security and privacy^]. 
+To enhance your security, see New Relic's https://docs.newrelic.com/docs/accounts/accounts/saml-single-sign/saml-service-providers/[Intro to authentication (SAML SSO) for users on original user model^]. Modify the https://docs.newrelic.com/docs/agents/manage-apm-agents/configuration/high-security-mode/[high-security mode^] settings, and review the https://docs.newrelic.com/docs/insights/event-data-sources/default-events/query-account-audit-logs-nrauditevent/[account audit logs (NrAuditEvent)^]. For more information, see https://docs.newrelic.com/docs/security/[Security and privacy^]. 
