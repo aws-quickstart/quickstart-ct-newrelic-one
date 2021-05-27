@@ -2,7 +2,7 @@
 
 ==== Prepare your AWS Control Tower account
 
-AWS Control Tower must be deployed prior to launching this Quick Start. For information about setting up an AWS Control Tower landing zone, see https://docs.aws.amazon.com/controltower/latest/userguide/getting-started-with-control-tower.html[Getting Started with AWS Control Tower^]. 
+AWS Control Tower must be deployed before launching this Quick Start. For information about setting up an AWS Control Tower landing zone, see https://docs.aws.amazon.com/controltower/latest/userguide/getting-started-with-control-tower.html[Getting Started with AWS Control Tower^]. 
 
 ==== Prepare your {partner-company-name} account
 

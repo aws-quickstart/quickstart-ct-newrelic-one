@@ -22,7 +22,7 @@ endif::marketplace_subscription[]
 
 === Launch the Quick Start
 // Adapt the following warning to your Quick Start.
-WARNING: If you intend to enroll existing AWS accounts into {partner-product-short-name}, ensure that your AWS accounts are enrolled in AWS Control Tower. This Quick Start does not support enrolling AWS accounts from organizationa from outside of your existing AWS Control Tower organization. Ensure that your list of existing AWS accounts are formatted as a comma-delimited string (for example, `account_id1,account_id2,account_id3`). 
+WARNING: If you want to enroll existing AWS accounts into {partner-product-short-name}, ensure that your AWS accounts are enrolled in AWS Control Tower. This Quick Start does not support enrolling AWS accounts from organizations that are outside of AWS Control Tower. Your list of existing AWS accounts must be formatted as a comma-delimited string (for example, `account_id1,account_id2,account_id3`). 
 
 . Sign in to your AWS Control Tower management account, and launch the AWS CloudFormation template using the following link:
 
