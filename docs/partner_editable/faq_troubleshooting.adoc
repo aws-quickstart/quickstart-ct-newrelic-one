@@ -20,7 +20,7 @@ New Relic offers several https://developer.newrelic.com/try-our-apis/[APIs^] for
 
 *A.* New Relic's data-retention policy ranges from 8 to 395 days, and the ability to edit data retention periods differs depending on your https://newrelic.com/pricing[pricing plan^]. Reducing data retention to below its contracted value does not reduce New Relic’s data ingest charges. Conversely, increasing retention for targeted telemetry data types starts a conversation with New Relic about adjusting your data ingest charges. For more information, see https://docs.newrelic.com/docs/telemetry-data-platform/manage-data/manage-data-retention/[Manage data retention^].
 
-*Q* Can I delete data from New Relic?
+*Q.* Can I delete data from New Relic?
 
 *A.* After telemetry data is reported to New Relic and available for querying, it cannot be edited or deleted. This is a design decision that optimizes New Relic's speed and performance at scale. Data expires and is purged when its retention period ends.
 
@@ -31,7 +31,6 @@ New Relic offers several https://developer.newrelic.com/try-our-apis/[APIs^] for
 *Q.* How does New Relic help to ensure the security and privacy of my data?
 
 *A.* To learn about how New Relic ensures security, see https://newrelic.com/security[New Relic Security^]. For more information, see https://docs.newrelic.com/docs/security/security-privacy/data-privacy/data-privacy-new-relic/[Security & privacy by design^], https://docs.newrelic.com/docs/security/security-privacy/data-privacy/security-controls-privacy/[Security controls for privacy^], and https://newrelic.com/security/compliance-certifications[Compliance and Certifications^].
-
 
 *Q.* How much does New Relic cost?
 
