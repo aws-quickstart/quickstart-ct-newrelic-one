@@ -22,8 +22,8 @@ The time to complete this step depends on how many AWS accounts are included in 
 
 After you confirm that the AWS CloudFormation stack was removed, remove all enrolled accounts from New Relic.
 
-* https://one.newrelic.com[Log in^] to your New Relic account.
-* To uninstall the AWS integration from New Relic, see https://docs.newrelic.com/docs/infrastructure/install-infrastructure-agent/update-or-uninstall/uninstall-infrastructure-integrations/#uninstall-aws[Uninstall infrastructure integrations^].
+. https://one.newrelic.com[Log in^] to your New Relic account.
+. To uninstall the AWS integration from New Relic, see https://docs.newrelic.com/docs/infrastructure/install-infrastructure-agent/update-or-uninstall/uninstall-infrastructure-integrations/#uninstall-aws[Uninstall infrastructure integrations^].
 
 == Best practices for using {partner-product-short-name} on AWS
 
