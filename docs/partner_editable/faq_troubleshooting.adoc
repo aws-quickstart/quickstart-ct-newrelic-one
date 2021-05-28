@@ -1,39 +1,49 @@
-// Add any tips or answers to anticipated questions.
 
 == FAQ
-For a list of troubleshooting topics, see https://docs.newrelic.com/docs/integrations/amazon-integrations/troubleshooting/[New Relic troubleshooting^].
+For a list of troubleshooting topics, see https://docs.newrelic.com/docs/integrations/amazon-integrations/troubleshooting/[New Relic troubleshooting^]
 
-*Q.* What data analytics does New Relic provide?
+*Q.* Can I purchase New Relic from AWS Marketplace?
 
-*A.* New Relic provides a real-time analytics platform that collects metrics, events, logs, and traces from your production software, infrastructure, and services. New Relic transforms the data into actionable items for your stack, business, and customers.
+*A.* Yes. You can access and purchase New Relic https://aws.amazon.com/marketplace/pp/B08L5FQMTG[from AWS Marketplace^], which offers pay-as-you-go pricing. This includes access to the perpetual free tier. For an additional discount, see https://aws.amazon.com/marketplace/pp/B08HHCY6JY[Support Information^].
 
-*Q.* Can I add additional, external data to New Relic?
+*Q.* What capabilities does New Relic provide?
 
-*A.* Yes. New Relic is an open platform that allows you to send metrics, events, logs, and traces from third-party sources. For example, you can use custom events to store data that is unavailable during a page view, server transaction, or mobile session. 
-//TODO Need links/sources for the following statement.
-Learn more about how New Relic supports open instrumentation to ingest metrics data from Prometheus, tracing data instrumented with Zipkin, or logs data from Fluentd.
+*A.* New Relic is an observability platform that helps you build better software. You can import telemetry data from any source to help you understand a system and how to improve it. For more information, see https://docs.newrelic.com/docs/using-new-relic/welcome-new-relic/get-started/introduction-new-relic/[Introduction to New Relic^].
 
-*Q.* What is the data-retention period for queried events?
+*Q.* Can I ingest additional, external data into New Relic?
 
-*A.* Data retention varies with the type of data (metrics, events, logs, and traces) and is generally up to you. New Relic has customizable data-retention settings, so, in some cases, you can retain data for as long as necessary. The price of storage is determined by the amount of stored data, so choose a retention period (where applicable) that meets your business and budgetary needs.
+*A.* Yes. New Relic is best used as a single source of truth for operational data, regardless of the data's origins. In addition to https://opensource.newrelic.com/instrumentation/[New Relic’s open-source instrumentation^] agents, New Relic provides https://newrelic.com/integrations[a catalog of integrations^] and open-source tools for ingesting data, such as Prometheus, Fluentd, and Logstash. If these integrations don't suit your needs, New Relic's open-source https://docs.newrelic.com/docs/telemetry-data-platform/ingest-apis/telemetry-sdks-report-custom-telemetry-data/[Telemetry SDKs^] let you build your own integration.
 
-*Q.* Can I extract data from New Relic?
+New Relic offers several https://developer.newrelic.com/try-our-apis/[APIs^] for retrieving MELT (metrics, events logs, and traces) data types into without using an installed agent. New Relic also offers https://docs.newrelic.com/docs/integrations/open-source-telemetry-integrations/[open-source telemetry integrations^] that report data from OpenCensus, OpenTelemetry, DropWizard, Prometheus, and more. New Relic’s programmable platform lets you build https://docs.newrelic.com/docs/new-relic-one/use-new-relic-one/build-new-relic-one/build-custom-new-relic-one-application/[New Relic One apps^] to connect system performance to business needs, such as business KPIs and customer engagements. For more information, see https://docs.newrelic.com/docs/telemetry-data-platform/get-started/introduction-new-relic-data-ingest-apis-sdks/[Get Data into New Relic^].
 
-*A.* Exporting data from New Relic is available via New Relic's API or JSON code, which is provided with each chart, graph, and dashboard.
-//TODO Need links/references to this next sentence.
-Find out more about exporting New Relic data.
+*Q.* What is the data retention period for New Relic?
+
+*A.* New Relic's data-retention policy ranges from 8 to 395 days, and the ability to edit data retention periods differs depending on your https://newrelic.com/pricing[pricing plan^]. Reducing data retention to below its contracted value does not reduce New Relic’s data ingest charges. Conversely, increasing retention for targeted telemetry data types starts a conversation with New Relic about adjusting your data ingest charges. For more information, see https://docs.newrelic.com/docs/telemetry-data-platform/manage-data/manage-data-retention/[Manage data retention^].
+
+*Q.* Can I delete data from New Relic?
+
+*A.* After telemetry data is reported to New Relic and available for querying, it cannot be edited or deleted. This is a design decision that optimizes New Relic's speed and performance at scale. Data expires and is purged when its retention period ends.
+
+*Q.* How can I track my New Relic usage?
+
+*A.* New Relic provides a UI for monitoring your usage and managing your data. You can also query your usage to get more detail than is available in the UI and set up alerts to get notifications about changes in your usage. For more information, see https://docs.newrelic.com/docs/accounts/accounts-billing/new-relic-one-pricing-users/usage-queries-alerts/[Query and alert on billing/usage data^].
+
+*Q.* How does New Relic help to ensure the security and privacy of my data?
+
+*A.* To learn about how New Relic ensures security, see https://newrelic.com/security[New Relic Security^]. For more information, see https://docs.newrelic.com/docs/security/security-privacy/data-privacy/data-privacy-new-relic/[Security & privacy by design^], https://docs.newrelic.com/docs/security/security-privacy/data-privacy/security-controls-privacy/[Security controls for privacy^], and https://newrelic.com/security/compliance-certifications[Compliance and Certifications^].
 
 *Q.* How much does New Relic cost?
 
-*A.* Pricing depends on the New Relic product you use. For example, New Relic offers host-based pricing for the New Relic infrastructure product, which is required for AWS integrations. For more information, https://newrelic.com/about/contact-us[Contact New Relic^].
+*A.* If you are an existing New Relic customer, see https://docs.newrelic.com/docs/accounts/accounts-billing/new-relic-one-pricing-users/pricing-billing[New Relic One pricing and billing^]. If you are new to New Relic, see https://newrelic.com/pricing[New Relic pricing^]. For more information, https://newrelic.com/about/contact-us[Contact New Relic^] or see https://docs.newrelic.com/docs/licenses/license-information/faq/new-relic-one-pricing-plan-frequently-asked-questions/[New Relic One pricing plan: Frequently asked questions^]. You can also https://aws.amazon.com/marketplace/pp/B08L5FQMTG[sign up^] for a free New Relic account that allows 100 GB of free data per month.
 
 *Q.* I encountered a *CREATE_FAILED* error when I launched the Quick Start.
 
-*A.* If AWS CloudFormation fails to create the stack, relaunch the template with *Rollback on failure* set to *Disabled*. This setting is in the AWS CloudFormation console under *Advanced* on the *Configure stack options* page. With this setting, the stack’s state is retained, and the instance remains running so you can troubleshoot the issue. (For Windows, look at the log files in `%ProgramFiles%\Amazon\EC2ConfigService` and `C:\cfn\log`.) Lastly, inspect for errors the Amazon CloudWatch logs for the AWS Lambda function `NewRelicOnboardingFunction`.
-
-*Q.* I included a list of AWS accounts in the deployment, but no AWS integrations are shown in the New Relic console.
-
-*A.* Ensure that your list includes only AWS account IDs that are managed by AWS Control Tower. Also verify that your New Relic NerdGraph API key is correct and has the required permission to set up an AWS integration. Inspect the Amazon CloudWatch logs for errors triggered by the Lambda function `NewRelicRegisterFunction`.
+*A.* If AWS CloudFormation fails to create the stack, relaunch the template with *Rollback on failure* set to *Disabled*. This setting is in the AWS CloudFormation console under *Advanced* on the *Configure stack options* page. With this setting, the stack’s state is retained, and the instance remains running so you can troubleshoot the issue. (For Windows, look at the log files in `%ProgramFiles%\Amazon\EC2ConfigService` and `C:\cfn\log`.) Also, see Amazon CloudWatch for errors associated with the AWS Lambda function `NewRelicOnboardingFunction`.
 
 *Q.* I encountered a size-limitation error when I deployed the AWS CloudFormation templates.
+
 *A.* Launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer, or from a location other than an S3 bucket, you might encounter template-size limitations. For more information, see http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html[AWS CloudFormation quotas^].
+
+*Q.* I included a list of AWS accounts during the deployment, but none of the accounts show up in New Relic's UI.
+
+*A.* Ensure that your list includes only AWS account IDs that are managed by AWS Control Tower and that the account IDs are separated by commas. Also ensure that you deployed the stack in the same Region as your AWS Control Tower management account and that the New Relic NerdGraph user API key is correct. Lastly, inspect the Amazon CloudWatch logs for errors regarding the AWS Lambda function `NewRelicOnboardingFunction`.

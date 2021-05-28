@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Control Tower customization that adds in New Relic integration to your aws accounts enrolled using AWS Control Tower.(qs-1rsuloqd4)
+Description: Integrates New Relic with AWS accounts that use AWS Control Tower.
 Metadata:
   QuickStartDocumentation:
     EntrypointName: "Parameters for deploying New Relic"
@@ -24,56 +24,55 @@ Metadata:
           - QSS3KeyPrefix
     ParameterLabels:
       NewRelicAccountNumber:
-        default: NewRelic Account Id
+        default: New Relic account ID.
       NewRelicAccessKey:
-        default: NewRelic NerdGraph Access Key
+        default: New Relic NerdGraph access key.
       NerdGraphEndpoint:
-        default: NewRelic NerdGraph API endpoint
+        default: New Relic NerdGraph API endpoint.
       LaunchAccountList:
-        default: Existing AWS accounts include list
+        default: Existing AWS accounts include list.
       StackSetName:
-        default: StackSet name
+        default: StackSet name.
       StackSetUrl:
-        default: StackSet template URL
+        default: StackSet template URL.
       QSS3BucketName:
-        default: Quick Start S3 bucket name
+        default: Quick Start S3 bucket name.
       QSS3KeyPrefix:
-        default: Quick Start S3 key prefix
+        default: Quick Start S3 key prefix.
 Parameters:
   NewRelicAccountNumber:
     Type: String
-    Description: Your Newrelic account number
+    Description: New Relic account number.
     AllowedPattern: '[0-9]+'
   LaunchAccountList:
     Type: String
-    Description: Comma delimited list of accounts to be included during initial launch. All new accounts will be automatically included via AWS Control Tower LifeCycle events.
+    Description: Comma-delimited list of accounts to include during initial launch. New accounts are automatically integrated with AWS Control Tower.
   NewRelicAccessKey:
     Type: String
     NoEcho: true
-    Description: NewRelic NerdGraph User Key
+    Description: New Relic NerdGraph user key.
   NerdGraphEndpoint:
     Type: String
-    Description: NewRelic NerdGraph endpoint URL
+    Description: New Relic NerdGraph endpoint URL.
     Default: 'https://api.newrelic.com/graphql'
     AllowedValues:
       - 'https://api.newrelic.com/graphql'
       - 'https://api.eu.newrelic.com/graphiql'
   StackSetName:
     Type: String
-    Description: NewRelic CT Integration StackSet name
+    Description: AWS Control Tower integration StackSet name.
     Default: NewRelic-Integration
   StackSetUrl:
     Type: String
-    Default: https://aws-quickstart.s3.amazonaws.com/quickstart-ct-newrelic-one/templates/newrelic-stack-set.yml
-    Description: NewRelic CT Integration StackSet template URL
+    Description: AWS Control Tower integration StackSet template URL.
   QSS3BucketName:
     Type: String
     Default: aws-quickstart
-    Description: S3 bucket that you created for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but do not start or end with a hyphen (-).
+    Description: "S3 bucket for Quick Start assets. Use this if you want to customize your deployment. The bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but it cannot start or end with hyphens (-)."
   QSS3KeyPrefix:
     Type: String
     Default: quickstart-ct-newrelic-one/
-    Description: S3 key prefix that is used to simulate a directory for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html.
+    Description: "S3 key prefix to simulate a directory for Quick Start assets. Use this if you want to customize your deployment. The prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). For more information, see https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html."
 Resources:
   LambdaZipsBucket:
     Type: AWS::S3::Bucket
@@ -125,7 +124,7 @@ Resources:
   CopyZipsFunction:
     Type: AWS::Lambda::Function
     Properties:
-      Description: Copies objects from a source S3 bucket to a destination
+      Description: Copies objects from the S3 bucket to a new location.
       Handler: index.handler
       Runtime: python3.7
       Role: !GetAtt 'CopyZipsRole.Arn'
@@ -461,7 +460,7 @@ Resources:
   NewRelicControlTowerEvents:
     Type: AWS::Events::Rule
     Properties:
-      Description: Capture Control Tower LifeCycle Events and Trigger an Action
+      Description: Captures AWS Control Tower LifeCycle events and invokes additional functions.
       EventPattern:
         detail:
           eventName:
@@ -470,7 +469,7 @@ Resources:
           eventSource:
           - controltower.amazonaws.com
         detail-type:
-        - AWS Service Event via CloudTrail
+        - AWS service event via AWS CloudTrail
         source:
         - aws.controltower
       Name: NewRelicControlTowerEvents

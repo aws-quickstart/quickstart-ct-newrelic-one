@@ -1,19 +1,20 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Adds in New Relic integration to your aws accounts. Launch as Stack Set in your Control Tower landing zone master account.(qs-1rsulpe1p)
+Description: Integrates New Relic with AWS accounts that use AWS Control Tower. This deployment launches as a stack set in your AWS Control Tower landing zone.
 Parameters:
   NewRelicAccountNumber:
     Type: String
-    Description: Your Newrelic account number
+    Description: New Relic account number.
     AllowedPattern: '[0-9]+'
   PolicyName: 
     Type: String
     Default: NewRelicIntegrationRole
-    Description: 'Policy name of the policy to use in the Role. If no value is supplied it will use the AWS default ReadOnlyAccess.
-    The default AWS ReadOnlyAccess policy is managed by AWS and automatically gains new permissions as new services are introduced but
-    includes a broad set of permissions which are not required by NewRelic integrations.
-    If a value is supplied a custom policy will be created with the provided name. This custom policy only includes the minimum 
-    required permissions to allow NewRelic to monitor your Lambda functions. Take into account that this policy is not automatically 
-    updated by AWS, and must be managed by you.'
+    Description: 'Policy name for the role. If you provide no value, the deployment uses 
+    ReadOnlyAccess by default, which is managed by AWS. This default role automatically 
+    inherits permissions as new services are added but includes a broad set of permissions 
+    that are not required by New Relic. If you provide a value, a custom policy 
+    is created using the name you specify. This custom policy includes only minimal permissions 
+    that allow New Relic to monitor your Lambda functions. Note that you are responsible for 
+    managing a custom policy.'
 
 Conditions: 
   UseCustomPolicy: !Not [!Equals [ !Ref PolicyName, '']]
@@ -26,7 +27,7 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W28
-            reason: "New Relic needs to name IAM roles to help uniquely identify them."
+            reason: "New Relic must use unique IAM role names to identify them."
     Condition: UseDefaultPolicy
     Properties:
       ManagedPolicyArns: 
@@ -49,7 +50,7 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: W28
-            reason: "New Relic needs to name IAM roles to help uniquely identify them."
+            reason: "New Relic must use unique IAM role names to identify them."
     Condition: UseCustomPolicy
     Properties:
       RoleName: !Join ['_', ['NewRelicIntegrationRole', !Ref NewRelicAccountNumber]]
@@ -70,11 +71,11 @@ Resources:
       cfn_nag:
         rules_to_suppress:
           - id: F5
-            reason: "AWS Support does not support specifying a resource ARN in the Resource element of an IAM policy statement. To allow access to AWS Support, specify “Resource”: “*” in your policy."
+            reason: 'AWS does not support resource ARNs in the resource element of IAM policy statements. For AWS support, add “Resource”: “*” to your policy.'
           - id: W13
-            reason: "New Relic needs permissions to read telemetry data from supported services for ALL the AWS resources in the account."
+            reason: "New Relic requires permission to read telemetry data from all AWS resources in your account."
           - id: W28
-            reason: "New Relic needs to name IAM roles to help uniquely identify them."
+            reason: "New Relic must use unique IAM role names to identify them."
     Condition: UseCustomPolicy
     Properties:    
       ManagedPolicyName: !Ref PolicyName
