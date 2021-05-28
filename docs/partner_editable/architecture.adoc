@@ -12,4 +12,4 @@ image::../images/newrelic-one-ct-integration-arch.png[New Relic AWS Control Towe
 * A dead letter queue collects messages that the New Relic register Lambda function fails to process.
 * A NerdGraph API key secret is retrieved from AWS Secrets Manager (not shown). The New Relic register Lambda function calls the New Relic NerdGraph mutation endpoint to link your AWS account with your New Relic account.
 * A New Relic onboarding Lambda function invokes the stack SNS topic and provides input to the New Relic StackSet, which includes a cross-account IAM role.
-* The New Relic StackSet creates a New Relic AWS Identity and Access Management (IAM) cross-account role.
+* The New Relic StackSet creates a New Relic IAM cross-account role.
