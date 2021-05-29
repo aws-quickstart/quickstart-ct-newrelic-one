@@ -1,6 +1,6 @@
 // Change the following attributes.
 :quickstart-project-name: quickstart-ct-newrelic-one
-:partner-product-name: New Relic AWS Control Tower integration
+:partner-product-name: New Relic AWS Control Tower Integration
 // For the following attribute, if you have no short name, enter the same name as partner-product-name.
 :partner-product-short-name: New Relic integration
 // If there's no partner, comment partner-company-name.
