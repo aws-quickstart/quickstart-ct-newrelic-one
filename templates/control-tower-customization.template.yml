@@ -48,7 +48,9 @@ Parameters:
     ConstraintDescription: New Relic account ID contains only numbers
   LaunchAccountList:
     Type: String
-    Description: Comma separated list of existing (already enrolled) AWS account IDs that you wish to monitor with New Relic.
+    Description: Comma separated string of existing (enrolled with Control Tower) AWS account IDs that you wish to monitor with New Relic. See https://docs.aws.amazon.com/general/latest/gr/acct-identifiers.html
+    AllowedPattern: '^$|^(([0-9]){12},)*(([0-9]){12})$'
+    ConstraintDescription: LaunchAccountList must be either empty or a comma separated string of AWS account IDs (12 digit number) with no spaces
   NewRelicAccessKey:
     Type: String
     NoEcho: true
