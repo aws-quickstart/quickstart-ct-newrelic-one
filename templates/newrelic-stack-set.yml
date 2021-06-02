@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Integrates New Relic with AWS accounts that use AWS Control Tower. This deployment launches as a stack set in your AWS Control Tower landing zone.
+Description: Integrates New Relic with AWS accounts that use AWS Control Tower. This deployment launches as a stack set in your AWS Control Tower landing zone.(qs-1rsulpe1p)
 Parameters:
   NewRelicAccountNumber:
     Type: String
