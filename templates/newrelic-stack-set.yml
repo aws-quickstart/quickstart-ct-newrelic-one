@@ -3,7 +3,7 @@ Description: Integrates New Relic with AWS accounts that use AWS Control Tower. 
 Parameters:
   NewRelicAccountNumber:
     Type: String
-    Description: Your New Relic account ID
+    Description: New Relic account ID
     AllowedPattern: '[0-9]+'
     ConstraintDescription: New Relic account ID contains only numbers
   PolicyName: 

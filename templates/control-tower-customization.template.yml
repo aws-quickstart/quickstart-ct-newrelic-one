@@ -43,7 +43,7 @@ Parameters:
   NewRelicAccountNumber:
     Type: String
     NoEcho: true
-    Description: Your New Relic account ID. See https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/
+    Description: New Relic account ID. See https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/
     AllowedPattern: '[0-9]+'
     ConstraintDescription: New Relic account ID contains only numbers
   LaunchAccountList:
