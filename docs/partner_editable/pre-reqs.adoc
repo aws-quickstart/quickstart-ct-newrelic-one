@@ -10,20 +10,24 @@ When using the https://docs.newrelic.com/docs/accounts/accounts-billing/new-reli
 
 ==== Prepare for the deployment
 
-. New Relic account ID
+. {partner-company-name} account ID
 +
-This Quick Start integrates your landing zone with a single {partner-company-name} account. https://one.newrelic.com[Log in to your {partner-company-name} account]. For more information, see https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/[Account ID^].
+This Quick Start integrates your landing zone with a single {partner-company-name} account. https://one.newrelic.com[Log in to your {partner-company-name} account] and find the account ID. For more information, see https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/[Account ID^].
 +
-. New Relic NerdGraph API key
+. {partner-company-name} NerdGraph User key
 +
-For all deployment options, generate a {partner-company-name} API key, and enter it as parameter in the deployment. This Quick Start integrates {partner-company-name} NerdGraph with AWS Control Tower and {partner-company-name}. For more information, see https://docs.newrelic.com/docs/apis/nerdgraph/get-started/introduction-new-relic-nerdgraph/[Introduction to New Relic NerdGraph, our GraphQL API^].
+For all deployment options, use a {partner-company-name} User key, and enter it as parameter in the deployment. This Quick Start uses New Relic NerdGraph API for linking your AWS accounts with {partner-company-name}. For more information, see https://docs.newrelic.com/docs/apis/nerdgraph/get-started/introduction-new-relic-nerdgraph/[Introduction to New Relic NerdGraph, our GraphQL API^].
 +
-https://one.newrelic.com[Log in to your {partner-company-name} account]. For more information, see https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/[Account ID^].
+https://one.newrelic.com[Log in to your {partner-company-name} account]. Create a User key, if you don't have one already. For more information, see https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#user-api-key[User key^].
 +
-. (Optional) Launch an AWS account list
+. {partner-company-name} NerdGraph API endpoint
 +
-If you have existing AWS accounts that are managed by AWS Control Tower, deploy this Quick Start into all of your accounts by adding a comma-delimited list of AWS account IDs.
+Determine if your {partner-company-name} account is in US or EU data center. For more information, see https://docs.newrelic.com/docs/using-new-relic/welcome-new-relic/get-started/our-eu-us-region-data-centers/[{partner-company-name} data centers]. Use the default NerdGraph endpoint unless your New Relic account uses an EU data center. For more information, see https://docs.newrelic.com/docs/apis/nerdgraph/get-started/introduction-new-relic-nerdgraph/#authentication[NerdGraph endpoints]
 +
-* Log in to an AWS Control Tower–management account.
+. (Optional) Existing AWS account ID list
++
+In case you've already set up your landing zone, and want to monitor existing AWS accounts enrolled in Control Tower managed organization with {partner-company-name}, supply the list of AWS account IDs (as comma separated string).
++
+* Log in to an AWS Control Tower management account.
 * For a list of managed accounts, navigate to https://console.aws.amazon.com/controltower/home/accounts?[AWS Control Tower^].
 * Add your AWS account IDs.

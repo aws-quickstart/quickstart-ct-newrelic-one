@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Integrates New Relic with AWS accounts that use AWS Control Tower.
+Description: AWS Control Tower customization that adds in New Relic integration to your landing zone.
 Metadata:
   QuickStartDocumentation:
-    EntrypointName: "Parameters for deploying New Relic"
+    EntrypointName: "Parameters for deploying New Relic AWS Control Tower integration"
   AWS::CloudFormation::Interface: 
     ParameterGroups:
       - Label:
@@ -12,7 +12,7 @@ Metadata:
           - NewRelicAccessKey
           - NerdGraphEndpoint
       - Label:
-          default: "Deployment scope and configuration"
+          default: "Deployment configuration"
         Parameters:
           - LaunchAccountList
           - StackSetName
@@ -24,13 +24,13 @@ Metadata:
           - QSS3KeyPrefix
     ParameterLabels:
       NewRelicAccountNumber:
-        default: New Relic account ID.
+        default: New Relic account ID
       NewRelicAccessKey:
-        default: New Relic NerdGraph access key.
+        default: New Relic NerdGraph User key
       NerdGraphEndpoint:
-        default: New Relic NerdGraph API endpoint.
+        default: New Relic NerdGraph API endpoint
       LaunchAccountList:
-        default: Existing AWS accounts include list.
+        default: Existing AWS account ID list
       StackSetName:
         default: StackSet name.
       StackSetUrl:
@@ -42,29 +42,35 @@ Metadata:
 Parameters:
   NewRelicAccountNumber:
     Type: String
-    Description: New Relic account number.
+    NoEcho: true
+    Description: New Relic account ID. See https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/
     AllowedPattern: '[0-9]+'
+    ConstraintDescription: New Relic account ID contains only numbers
   LaunchAccountList:
     Type: String
-    Description: Comma-delimited list of accounts to include during initial launch. New accounts are automatically integrated with AWS Control Tower.
+    Description: Comma separated string of existing (enrolled with Control Tower) AWS account IDs that you wish to monitor with New Relic. See https://docs.aws.amazon.com/general/latest/gr/acct-identifiers.html
+    AllowedPattern: '^$|^(([0-9]){12},)*(([0-9]){12})$'
+    ConstraintDescription: LaunchAccountList must be either empty or a comma separated string of AWS account IDs (12 digit number) with no spaces
   NewRelicAccessKey:
     Type: String
     NoEcho: true
-    Description: New Relic NerdGraph user key.
+    AllowedPattern: '^([A-Z0-9]){32}$'
+    ConstraintDescription: New Relic User key is 32 characters long, and contains only numbers and letters
+    Description: New Relic NerdGraph User key. See https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#user-api-key
   NerdGraphEndpoint:
     Type: String
-    Description: New Relic NerdGraph endpoint URL.
+    Description: New Relic NerdGraph endpoint URL. Use default unless your New Relic account uses an EU data center. See https://docs.newrelic.com/docs/apis/nerdgraph/get-started/introduction-new-relic-nerdgraph/#authentication
     Default: 'https://api.newrelic.com/graphql'
     AllowedValues:
       - 'https://api.newrelic.com/graphql'
       - 'https://api.eu.newrelic.com/graphiql'
   StackSetName:
     Type: String
-    Description: AWS Control Tower integration StackSet name.
+    Description: New Relic integration StackSet name
     Default: NewRelic-Integration
   StackSetUrl:
     Type: String
-    Description: AWS Control Tower integration StackSet template URL.
+    Description: New Relic integration StackSet template URL
   QSS3BucketName:
     Type: String
     Default: aws-quickstart
