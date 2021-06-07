@@ -1,1 +1,1 @@
-This Quick Start assumes familiarity with https://aws.amazon.com/controltower/[AWS Control Tower^]. For more information, see https://docs.aws.amazon.com/controltower/latest/userguide/getting-started-with-control-tower.html[Getting Started with AWS Control Tower^]. 
+This Quick Start assumes familiarity with AWS Control Tower. For information about AWS Control Tower, see https://docs.aws.amazon.com/controltower/latest/userguide/getting-started-with-control-tower.html[Getting Started with AWS Control Tower] in the AWS Control Tower User Guide. 
