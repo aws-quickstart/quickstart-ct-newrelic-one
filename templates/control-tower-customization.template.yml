@@ -54,7 +54,7 @@ Parameters:
   NewRelicAccessKey:
     Type: String
     NoEcho: true
-    AllowedPattern: '^([A-Z0-9]){32}$'
+    AllowedPattern: '^([A-Z0-9-]){32}$'
     ConstraintDescription: New Relic User key is 32 characters long, and contains only numbers and letters
     Description: New Relic NerdGraph User key. See https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#user-api-key
   NerdGraphEndpoint:
@@ -70,7 +70,8 @@ Parameters:
     Default: NewRelic-Integration
   StackSetUrl:
     Type: String
-    Description: New Relic integration StackSet template URL
+    Default: https://aws-quickstart.s3.amazonaws.com/quickstart-ct-newrelic-one/templates/newrelic-stack-set.yml
+    Description: New Relic integration StackSet template URL    
   QSS3BucketName:
     Type: String
     Default: aws-quickstart
@@ -242,7 +243,8 @@ Resources:
             Action:
             - cloudformation:CreateStackSet
             - cloudformation:DescribeStackSet
-            Resource: '*'
+            Resource:
+              !Join ['', ['arn:aws:cloudformation:', '*', ':', '*', ':stackset/NewRelic-*' ]]
           - Sid: S3Ops
             Effect: Allow
             Action:
@@ -355,7 +357,8 @@ Resources:
             Effect: Allow
             Action:
             - cloudformation:DescribeStackSet
-            Resource: '*'
+            Resource:
+              !Join ['', ['arn:aws:cloudformation:', '*', ':', '*', ':stackset/NewRelic-*' ]]
           - Sid: SNSOps
             Effect: Allow
             Action:
@@ -416,7 +419,8 @@ Resources:
             Effect: Allow
             Action:
             - cloudformation:DescribeStackSet
-            Resource: '*'
+            Resource: 
+              !Join ['', ['arn:aws:cloudformation:', '*', ':', '*', ':stackset/NewRelic-*' ]]
           - Sid: SQSOps
             Effect: Allow
             Action:
