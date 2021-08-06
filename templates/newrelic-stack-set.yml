@@ -16,6 +16,10 @@ Parameters:
     is created using the name you specify. This custom policy includes only minimal permissions 
     that allow New Relic to monitor your Lambda functions. Note that you are responsible for 
     managing a custom policy.'
+  NewRelicTrustedPrincipal:
+    Type: String
+    Default: 754728514883
+    Description: 'New Relic AWS Account Id for integration with customer AWS account. https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/connect-aws-new-relic-infrastructure-monitoring/'
 
 Conditions: 
   UseCustomPolicy: !Not [!Equals [ !Ref PolicyName, '']]
@@ -32,14 +36,14 @@ Resources:
     Condition: UseDefaultPolicy
     Properties:
       ManagedPolicyArns: 
-        - arn:aws:iam::aws:policy/ReadOnlyAccess
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/ReadOnlyAccess'
       RoleName: !Join ['_', ['NewRelicIntegrationRole', !Ref NewRelicAccountNumber]]
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
           - Effect: Allow
             Principal:
-              AWS: 'arn:aws:iam::754728514883:root'
+              AWS: !Sub 'arn:aws:iam::${NewRelicTrustedPrincipal}:root'
             Action: 'sts:AssumeRole'
             Condition:
               StringEquals:
@@ -60,7 +64,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              AWS: 'arn:aws:iam::754728514883:root'
+              AWS: !Sub 'arn:aws:iam::${NewRelicTrustedPrincipal}:root'
             Action: 'sts:AssumeRole'
             Condition:
               StringEquals:
