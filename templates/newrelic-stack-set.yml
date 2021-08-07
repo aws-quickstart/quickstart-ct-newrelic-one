@@ -69,7 +69,8 @@ Resources:
             Condition:
               StringEquals:
                 'sts:ExternalId': !Ref NewRelicAccountNumber
-                
+
+# Policy reference from: https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/integrations-managed-policies/#list-permissions                
   NewRelicCustomPolicy:
     Type: 'AWS::IAM::ManagedPolicy'
     Metadata:
@@ -81,6 +82,11 @@ Resources:
             reason: "New Relic requires permission to read telemetry data from all AWS resources in your account."
           - id: W28
             reason: "New Relic must use unique IAM role names to identify them."
+#      cfn-lint:
+#        config:
+#          ignore_checks:
+            # TrustedAdvisor access at the moment requires permission wildcard `support:*`
+            #- EIAMPolicyActionWildcard
     Condition: UseCustomPolicy
     Properties:    
       ManagedPolicyName: !Ref PolicyName
@@ -91,20 +97,39 @@ Resources:
         Statement:
           - Effect: Allow
             Action:      
-              - 'elasticloadbalancing:Describe*'
+              - 'elasticloadbalancing:DescribeLoadBalancers'
+              - 'elasticloadbalancing:DescribeTargetGroups'
+              - 'elasticloadbalancing:DescribeTags'
+              - 'elasticloadbalancing:DescribeLoadBalancerAttributes'
+              - 'elasticloadbalancing:DescribeListeners'              
+              - 'elasticloadbalancing:DescribeRules'
+              - 'elasticloadbalancing:DescribeTargetGroupAttributes'              
+              - 'elasticloadbalancing:DescribeInstanceHealth'              
+              - 'elasticloadbalancing:DescribeLoadBalancerPolicies'
+              - 'elasticloadbalancing:DescribeLoadBalancerPolicyTypes'
               - 'apigateway:GET'
               - 'apigateway:HEAD'
               - 'apigateway:OPTIONS'
-              - 'autoscaling:Describe*'
+              - 'autoscaling:DescribeLaunchConfigurations'
+              - 'autoscaling:DescribeAutoScalingGroups'
+              - 'autoscaling:DescribePolicies'
+              - 'autoscaling:DescribeTags'
+              - 'autoscaling:DescribeAccountLimits'
               - 'budgets:ViewBudget'
-              - 'cloudfront:List*Distributions'
+              - 'cloudfront:ListDistributions'
+              - 'cloudfront:ListStreamingDistributions'
               - 'cloudfront:ListTagsForResource'
               - 'cloudtrail:LookupEvents'
               - 'dynamodb:DescribeLimits'
-              - 'dynamodb:List*Tables'
-              - 'dynamodb:Describe*Table'
+              - 'dynamodb:ListTables'
+              - 'dynamodb:DescribeTable'
+              - 'dynamodb:ListGlobalTables'
+              - 'dynamodb:DescribeGlobalTable'
               - 'dynamodb:ListTagsOfResource'
-              - 'ec2:DescribeVolume*'
+              - 'ec2:DescribeVolumesModifications'
+              - 'ec2:DescribeVolumes'
+              - 'ec2:DescribeVolumeStatus'
+              - 'ec2:DescribeVolumeAttribute'
               - 'ec2:DescribeInstanceStatus'
               - 'ec2:DescribeInstances'
               - 'ecs:ListServices'
@@ -112,20 +137,25 @@ Resources:
               - 'ecs:DescribeClusters'
               - 'ecs:ListClusters'
               - 'ecs:ListTagsForResource'
+              - 'ecs:ListContainerInstances'
+              - 'ecs:DescribeContainerInstances'
               - 'elasticfilesystem:DescribeMountTargets'
               - 'elasticfilesystem:DescribeFileSystems'
               - 'elasticache:DescribeCacheClusters'
               - 'elasticache:ListTagsForResource'
               - 'es:ListDomainNames'
-              - 'es:DescribeElasticsearchDomain*'
+              - 'es:DescribeElasticsearchDomain'
+              - 'es:DescribeElasticsearchDomains'
               - 'es:ListTags'
               - 'elasticbeanstalk:DescribeEnvironments'
               - 'elasticbeanstalk:DescribeInstancesHealth'
               - 'elasticbeanstalk:DescribeConfigurationSettings'
+              - 'elasticloadbalancing:DescribeLoadBalancers'
               - 'elasticmapreduce:ListInstances'
               - 'elasticmapreduce:ListClusters'
               - 'elasticmapreduce:DescribeCluster'
               - 'elasticmapreduce:ListInstanceGroups'
+              - 'elasticmapreduce:ListInstanceFleets'
               - 'health:DescribeAffectedEntities'
               - 'health:DescribeEventDetails'
               - 'health:DescribeEvents'
@@ -206,6 +236,19 @@ Resources:
               - 'cloudwatch:ListMetrics'
               - 'cloudwatch:GetMetricData'
               - 'support:*'
-              - 'xray:BatchGet*'
-              - 'xray:Get*'
+              - 'xray:BatchGetTraces'
+              - 'xray:GetInsightSummaries'
+              - 'xray:GetServiceGraph'
+              - 'xray:GetInsightImpactGraph'
+              - 'xray:GetTraceSummaries'
+              - 'xray:GetGroups'
+              - 'xray:GetSamplingStatisticSummaries'
+              - 'xray:GetTraceGraph'
+              - 'xray:GetSamplingRules'
+              - 'xray:GetEncryptionConfig'
+              - 'xray:GetSamplingTargets'
+              - 'xray:GetTimeSeriesServiceStatistics'
+              - 'xray:GetGroup'
+              - 'xray:GetInsight'
+              - 'xray:GetInsightEvents'
             Resource: '*'
