@@ -71,7 +71,7 @@ Resources:
                 'sts:ExternalId': !Ref NewRelicAccountNumber
 
 # Policy reference from: https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/integrations-managed-policies/#list-permissions                
-  NewRelicCustomPolicy:
+  NewRelicCustomPolicyGranular:
     Type: 'AWS::IAM::ManagedPolicy'
     Metadata:
       cfn_nag:
@@ -82,60 +82,28 @@ Resources:
             reason: "New Relic requires permission to read telemetry data from all AWS resources in your account."
           - id: W28
             reason: "New Relic must use unique IAM role names to identify them."
-#      cfn-lint:
-#        config:
-#          ignore_checks:
-            # TrustedAdvisor access at the moment requires permission wildcard `support:*`
-            #- EIAMPolicyActionWildcard
     Condition: UseCustomPolicy
     Properties:    
-      ManagedPolicyName: !Ref PolicyName
+      ManagedPolicyName: !Join ['-', [!Ref PolicyName, 'GranularResources']]
       Roles:
         - !Ref NewRelicCustomPolicyRole
       PolicyDocument:
         Version: 2012-10-17
         Statement:
-          - Effect: Allow
-            Action:      
-              - 'elasticloadbalancing:DescribeLoadBalancers'
-              - 'elasticloadbalancing:DescribeTargetGroups'
-              - 'elasticloadbalancing:DescribeTags'
-              - 'elasticloadbalancing:DescribeLoadBalancerAttributes'
-              - 'elasticloadbalancing:DescribeListeners'              
-              - 'elasticloadbalancing:DescribeRules'
-              - 'elasticloadbalancing:DescribeTargetGroupAttributes'              
-              - 'elasticloadbalancing:DescribeInstanceHealth'              
-              - 'elasticloadbalancing:DescribeLoadBalancerPolicies'
-              - 'elasticloadbalancing:DescribeLoadBalancerPolicyTypes'
+          - Sid: Integration1
+            Effect: Allow
+            Action:    
               - 'apigateway:GET'
               - 'apigateway:HEAD'
               - 'apigateway:OPTIONS'
-              - 'autoscaling:DescribeLaunchConfigurations'
-              - 'autoscaling:DescribeAutoScalingGroups'
-              - 'autoscaling:DescribePolicies'
-              - 'autoscaling:DescribeTags'
-              - 'autoscaling:DescribeAccountLimits'
               - 'budgets:ViewBudget'
-              - 'cloudfront:ListDistributions'
-              - 'cloudfront:ListStreamingDistributions'
               - 'cloudfront:ListTagsForResource'
-              - 'cloudtrail:LookupEvents'
-              - 'dynamodb:DescribeLimits'
-              - 'dynamodb:ListTables'
               - 'dynamodb:DescribeTable'
-              - 'dynamodb:ListGlobalTables'
               - 'dynamodb:DescribeGlobalTable'
               - 'dynamodb:ListTagsOfResource'
-              - 'ec2:DescribeVolumesModifications'
-              - 'ec2:DescribeVolumes'
-              - 'ec2:DescribeVolumeStatus'
-              - 'ec2:DescribeVolumeAttribute'
-              - 'ec2:DescribeInstanceStatus'
-              - 'ec2:DescribeInstances'
               - 'ecs:ListServices'
               - 'ecs:DescribeServices'
               - 'ecs:DescribeClusters'
-              - 'ecs:ListClusters'
               - 'ecs:ListTagsForResource'
               - 'ecs:ListContainerInstances'
               - 'ecs:DescribeContainerInstances'
@@ -143,47 +111,31 @@ Resources:
               - 'elasticfilesystem:DescribeFileSystems'
               - 'elasticache:DescribeCacheClusters'
               - 'elasticache:ListTagsForResource'
-              - 'es:ListDomainNames'
+              - 'elasticloadbalancing:DescribeTags'
               - 'es:DescribeElasticsearchDomain'
               - 'es:DescribeElasticsearchDomains'
               - 'es:ListTags'
               - 'elasticbeanstalk:DescribeEnvironments'
               - 'elasticbeanstalk:DescribeInstancesHealth'
               - 'elasticbeanstalk:DescribeConfigurationSettings'
-              - 'elasticloadbalancing:DescribeLoadBalancers'
               - 'elasticmapreduce:ListInstances'
-              - 'elasticmapreduce:ListClusters'
               - 'elasticmapreduce:DescribeCluster'
               - 'elasticmapreduce:ListInstanceGroups'
               - 'elasticmapreduce:ListInstanceFleets'
               - 'health:DescribeAffectedEntities'
               - 'health:DescribeEventDetails'
-              - 'health:DescribeEvents'
-              - 'iam:ListSAMLProviders'
-              - 'iam:ListOpenIDConnectProviders'
-              - 'iam:ListServerCertificates'
-              - 'iam:GetAccountAuthorizationDetails'
-              - 'iam:ListVirtualMFADevices'
-              - 'iam:GetAccountSummary'
-              - 'iot:ListTopicRules'
               - 'iot:GetTopicRule'
-              - 'iot:ListThings'
               - 'firehose:DescribeDeliveryStream'
-              - 'firehose:ListDeliveryStreams'
-              - 'kinesis:ListStreams'
               - 'kinesis:DescribeStream'
               - 'kinesis:ListTagsForStream'
               - 'rds:ListTagsForResource'
               - 'rds:DescribeDBInstances'
               - 'rds:DescribeDBClusters'
-              - 'route53:ListHealthChecks'
               - 'route53:GetHostedZone'
-              - 'route53:ListHostedZones'
               - 'route53:ListResourceRecordSets'
               - 'route53:ListTagsForResources'
               - 's3:GetLifecycleConfiguration'
               - 's3:GetBucketTagging'
-              - 's3:ListAllMyBuckets'
               - 's3:GetBucketWebsite'
               - 's3:GetBucketLogging'
               - 's3:GetBucketCORS'
@@ -200,6 +152,124 @@ Resources:
               - 's3:GetEncryptionConfiguration'
               - 's3:GetInventoryConfiguration'
               - 's3:GetIpConfiguration'
+              - 'sns:GetTopicAttributes'
+              - 'sqs:ListQueueTags'
+              - 'sqs:GetQueueAttributes'
+              - 'redshift:DescribeClusterParameters'
+              - 'lambda:ListAliases'
+              - 'lambda:ListTags'
+              - 'xray:GetGroup'
+            Resource: 
+              - !Sub 'arn:${AWS::Partition}:execute-api:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:budgets:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:cloudfront:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:dynamodb:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:dynamodb::${AWS::AccountId}:*' #global table 
+              - !Sub 'arn:${AWS::Partition}:ecs:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:elasticfilesystem:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:elasticache:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:es:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:elasticbeanstalk:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:elasticmapreduce:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:health:*::*'
+              - !Sub 'arn:${AWS::Partition}:iot:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:firehose:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:kinesis:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:rds:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:route53:::*'
+              - !Sub 'arn:${AWS::Partition}:s3:::*'
+              - !Sub 'arn:${AWS::Partition}:sns:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:sqs:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:redshift:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:lambda:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:xray:*:${AWS::AccountId}:*'
+  NewRelicCustomPolicyGeneric:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F5
+            reason: 'AWS does not support resource ARNs in the resource element of IAM policy statements. For AWS support, add “Resource”: “*” to your policy.'
+          - id: W13
+            reason: "New Relic requires permission to read telemetry data from all AWS resources in your account."
+          - id: W28
+            reason: "New Relic must use unique IAM role names to identify them."
+      cfn-lint:
+        config:
+          ignore_checks:
+            - EIAMPolicyWildcardResource #see Sid Integration2 under policy document
+    Condition: UseCustomPolicy
+    Properties:    
+      ManagedPolicyName: !Join ['-', [!Ref PolicyName, 'GenericResources']]
+      Roles:
+        - !Ref NewRelicCustomPolicyRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Integration2 # These permissions does not support specifying a resource ARN in the Resource element of an IAM policy statement, exception for EIAMPolicyWildcardResource
+            Effect: Allow
+            Action:    
+              - 'tag:GetResources'
+              - 'support:DescribeTrustedAdvisorCheckRefreshStatuses'
+              - 'support:DescribeTrustedAdvisorCheckResult'
+              - 'support:DescribeTrustedAdvisorChecks'
+              - 'support:DescribeTrustedAdvisorCheckSummaries'
+              - 'support:RefreshTrustedAdvisorCheck'
+              - 'trustedadvisor:DescribeNotificationPreferences'
+              - 'trustedadvisor:DescribeReports'
+              - 'trustedadvisor:DescribeServiceMetadata'
+              - 'trustedadvisor:DescribeAccountAccess'
+              - 'trustedadvisor:DescribeCheckRefreshStatuses'
+              - 'trustedadvisor:DescribeCheckItems'
+              - 'trustedadvisor:DescribeAccount'
+              - 'trustedadvisor:DescribeOrganization'
+              - 'trustedadvisor:DescribeOrganizationAccounts'
+              - 'trustedadvisor:DescribeCheckSummaries'
+              - 'trustedadvisor:DescribeChecks'
+              - 's3:ListAllMyBuckets'
+              - 'elasticloadbalancing:DescribeLoadBalancers'
+              - 'elasticloadbalancing:DescribeTargetGroups'
+              - 'elasticloadbalancing:DescribeLoadBalancerAttributes'
+              - 'elasticloadbalancing:DescribeListeners'
+              - 'elasticloadbalancing:DescribeRules'
+              - 'elasticloadbalancing:DescribeTargetGroupAttributes'              
+              - 'elasticloadbalancing:DescribeInstanceHealth'              
+              - 'elasticloadbalancing:DescribeLoadBalancerPolicies'
+              - 'elasticloadbalancing:DescribeLoadBalancerPolicyTypes'
+              - 'autoscaling:DescribeLaunchConfigurations'
+              - 'autoscaling:DescribeAutoScalingGroups'
+              - 'autoscaling:DescribePolicies'
+              - 'autoscaling:DescribeTags'
+              - 'autoscaling:DescribeAccountLimits'
+              - 'cloudfront:ListDistributions'
+              - 'cloudfront:ListStreamingDistributions'
+              - 'cloudtrail:LookupEvents'
+              - 'dynamodb:DescribeLimits'
+              - 'dynamodb:ListTables'
+              - 'dynamodb:ListGlobalTables'
+              - 'ec2:DescribeVolumesModifications'
+              - 'ec2:DescribeVolumes'
+              - 'ec2:DescribeVolumeStatus'
+              - 'ec2:DescribeVolumeAttribute'
+              - 'ec2:DescribeInstanceStatus'
+              - 'ec2:DescribeInstances'
+              - 'ecs:ListClusters'
+              - 'es:ListDomainNames'
+              - 'elasticmapreduce:ListClusters'
+              - 'health:DescribeEvents'
+              - 'iam:ListSAMLProviders'
+              - 'iam:ListOpenIDConnectProviders'
+              - 'iam:ListServerCertificates'
+              - 'iam:GetAccountAuthorizationDetails'
+              - 'iam:ListVirtualMFADevices'
+              - 'iam:GetAccountSummary'
+              - 'iot:ListTopicRules'
+              - 'iot:ListThings'
+              - 'firehose:ListDeliveryStreams'
+              - 'kinesis:ListStreams'
+              - 'route53:ListHealthChecks'
+              - 'route53:ListHostedZones'
               - 'ses:ListConfigurationSets'
               - 'ses:GetSendQuota'
               - 'ses:DescribeConfigurationSet'
@@ -207,12 +277,8 @@ Resources:
               - 'ses:ListReceiptRuleSets'
               - 'ses:DescribeReceiptRule'
               - 'ses:DescribeReceiptRuleSet'
-              - 'sns:GetTopicAttributes'
               - 'sns:ListTopics'
               - 'sqs:ListQueues'
-              - 'sqs:ListQueueTags'
-              - 'sqs:GetQueueAttributes'
-              - 'tag:GetResources'
               - 'ec2:DescribeInternetGateways'
               - 'ec2:DescribeVpcs'
               - 'ec2:DescribeNatGateways'
@@ -226,16 +292,12 @@ Resources:
               - 'ec2:DescribeNetworkInterfaces'
               - 'ec2:DescribeVpnConnections'
               - 'redshift:DescribeClusters'
-              - 'redshift:DescribeClusterParameters'
               - 'lambda:GetAccountSettings'
               - 'lambda:ListFunctions'
-              - 'lambda:ListAliases'
-              - 'lambda:ListTags'
               - 'lambda:ListEventSourceMappings'
               - 'cloudwatch:GetMetricStatistics'
               - 'cloudwatch:ListMetrics'
               - 'cloudwatch:GetMetricData'
-              - 'support:*'
               - 'xray:BatchGetTraces'
               - 'xray:GetInsightSummaries'
               - 'xray:GetServiceGraph'
@@ -248,7 +310,6 @@ Resources:
               - 'xray:GetEncryptionConfig'
               - 'xray:GetSamplingTargets'
               - 'xray:GetTimeSeriesServiceStatistics'
-              - 'xray:GetGroup'
               - 'xray:GetInsight'
               - 'xray:GetInsightEvents'
             Resource: '*'
