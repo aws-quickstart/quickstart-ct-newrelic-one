@@ -161,6 +161,7 @@ Resources:
               - 'xray:GetGroup'
             Resource: 
               - !Sub 'arn:${AWS::Partition}:execute-api:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:apigateway:*::*'
               - !Sub 'arn:${AWS::Partition}:budgets:*:${AWS::AccountId}:*'
               - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:${AWS::AccountId}:*'
               - !Sub 'arn:${AWS::Partition}:cloudfront:*:${AWS::AccountId}:*'
