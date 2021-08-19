@@ -16,6 +16,6 @@ build: clean
 	python3 -m venv build/$(FUNCTION)
 	. build/$(FUNCTION)/bin/activate; \
 	pip3 install  -r requirements.txt; \
-	cp -r "$$VIRTUAL_ENV"/lib/python3.8/site-packages/ build/
+	cp -r "$$VIRTUAL_ENV"/lib/ build/
 	cd build/site-packages; zip -g -r $(DIST_DIR)/$(FUNCTION).zip . -x "*__pycache__*"
 	rm -rf build
