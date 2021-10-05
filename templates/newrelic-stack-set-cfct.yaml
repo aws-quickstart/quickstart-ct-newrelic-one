@@ -1,0 +1,326 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Integrates New Relic with AWS accounts that use AWS Control Tower Customization Framework (CfCT). This deployment launches as a stack set in your AWS Control Tower landing zone.(qs-1rsulpe1p)
+Parameters:
+  NewRelicAccountNumber:
+    Type: String
+    Description: New Relic account ID
+    AllowedPattern: '[0-9]+'
+    ConstraintDescription: New Relic account ID contains only numbers
+  PolicyName: 
+    Type: String
+    Default: NewRelicIntegrationRole
+    Description: 'Policy name for the role. If you provide no value, the deployment uses 
+    ReadOnlyAccess by default, which is managed by AWS. This default role automatically 
+    inherits permissions as new services are added but includes a broad set of permissions 
+    that are not required by New Relic. If you provide a value, a custom policy 
+    is created using the name you specify. This custom policy includes only minimal permissions 
+    that allow New Relic to monitor your Lambda functions. Note that you are responsible for 
+    managing a custom policy.'
+  NewRelicTrustedPrincipal:
+    Type: String
+    Default: 754728514883
+    Description: 'New Relic AWS Account Id for integration with customer AWS account. https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/connect-aws-new-relic-infrastructure-monitoring/'
+  RegistrationSNS:
+    Type: String
+    Description: ARN of the SNS in hub account to trigger New Relic account registration
+
+Conditions: 
+  UseCustomPolicy: !Not [!Equals [ !Ref PolicyName, '']]
+  UseDefaultPolicy: !Equals [ !Ref PolicyName, '']
+  
+Resources:
+  NewRelicDefaultPolicyRole:
+    Type: 'AWS::IAM::Role'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "New Relic must use unique IAM role names to identify them."
+    Condition: UseDefaultPolicy
+    Properties:
+      ManagedPolicyArns: 
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/ReadOnlyAccess'
+      RoleName: !Join ['_', ['NewRelicIntegrationRole', !Ref NewRelicAccountNumber]]
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${NewRelicTrustedPrincipal}:root'
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': !Ref NewRelicAccountNumber
+
+  NewRelicCustomPolicyRole:
+    Type: 'AWS::IAM::Role'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W28
+            reason: "New Relic must use unique IAM role names to identify them."
+    Condition: UseCustomPolicy
+    Properties:
+      RoleName: !Join ['_', ['NewRelicIntegrationRole', !Ref NewRelicAccountNumber]]
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Sub 'arn:aws:iam::${NewRelicTrustedPrincipal}:root'
+            Action: 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': !Ref NewRelicAccountNumber
+
+# Policy reference from: https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/integrations-managed-policies/#list-permissions                
+  NewRelicCustomPolicyGranular:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F5
+            reason: 'AWS does not support resource ARNs in the resource element of IAM policy statements. For AWS support, add “Resource”: “*” to your policy.'
+          - id: W13
+            reason: "New Relic requires permission to read telemetry data from all AWS resources in your account."
+          - id: W28
+            reason: "New Relic must use unique IAM role names to identify them."
+    Condition: UseCustomPolicy
+    Properties:    
+      ManagedPolicyName: !Join ['-', [!Ref PolicyName, 'GranularResources']]
+      Roles:
+        - !Ref NewRelicCustomPolicyRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Integration1
+            Effect: Allow
+            Action:    
+              - 'apigateway:GET'
+              - 'apigateway:HEAD'
+              - 'apigateway:OPTIONS'
+              - 'budgets:ViewBudget'
+              - 'cloudfront:ListTagsForResource'
+              - 'dynamodb:DescribeTable'
+              - 'dynamodb:DescribeGlobalTable'
+              - 'dynamodb:ListTagsOfResource'
+              - 'ecs:ListServices'
+              - 'ecs:DescribeServices'
+              - 'ecs:DescribeClusters'
+              - 'ecs:ListTagsForResource'
+              - 'ecs:ListContainerInstances'
+              - 'ecs:DescribeContainerInstances'
+              - 'elasticfilesystem:DescribeMountTargets'
+              - 'elasticfilesystem:DescribeFileSystems'
+              - 'elasticache:DescribeCacheClusters'
+              - 'elasticache:ListTagsForResource'
+              - 'elasticloadbalancing:DescribeTags'
+              - 'es:DescribeElasticsearchDomain'
+              - 'es:DescribeElasticsearchDomains'
+              - 'es:ListTags'
+              - 'elasticbeanstalk:DescribeEnvironments'
+              - 'elasticbeanstalk:DescribeInstancesHealth'
+              - 'elasticbeanstalk:DescribeConfigurationSettings'
+              - 'elasticmapreduce:ListInstances'
+              - 'elasticmapreduce:DescribeCluster'
+              - 'elasticmapreduce:ListInstanceGroups'
+              - 'elasticmapreduce:ListInstanceFleets'
+              - 'health:DescribeAffectedEntities'
+              - 'health:DescribeEventDetails'
+              - 'iot:GetTopicRule'
+              - 'firehose:DescribeDeliveryStream'
+              - 'kinesis:DescribeStream'
+              - 'kinesis:ListTagsForStream'
+              - 'rds:ListTagsForResource'
+              - 'rds:DescribeDBInstances'
+              - 'rds:DescribeDBClusters'
+              - 'route53:GetHostedZone'
+              - 'route53:ListResourceRecordSets'
+              - 'route53:ListTagsForResources'
+              - 's3:GetLifecycleConfiguration'
+              - 's3:GetBucketTagging'
+              - 's3:GetBucketWebsite'
+              - 's3:GetBucketLogging'
+              - 's3:GetBucketCORS'
+              - 's3:GetBucketVersioning'
+              - 's3:GetBucketAcl'
+              - 's3:GetBucketNotification'
+              - 's3:GetBucketPolicy'
+              - 's3:GetReplicationConfiguration'
+              - 's3:GetMetricsConfiguration'
+              - 's3:GetAccelerateConfiguration'
+              - 's3:GetAnalyticsConfiguration'
+              - 's3:GetBucketLocation'
+              - 's3:GetBucketRequestPayment'
+              - 's3:GetEncryptionConfiguration'
+              - 's3:GetInventoryConfiguration'
+              - 's3:GetIpConfiguration'
+              - 'sns:GetTopicAttributes'
+              - 'sqs:ListQueueTags'
+              - 'sqs:GetQueueAttributes'
+              - 'redshift:DescribeClusterParameters'
+              - 'lambda:ListAliases'
+              - 'lambda:ListTags'
+              - 'xray:GetGroup'
+            Resource: 
+              - !Sub 'arn:${AWS::Partition}:execute-api:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:apigateway:*::*'
+              - !Sub 'arn:${AWS::Partition}:budgets:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:elasticloadbalancing:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:cloudfront:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:dynamodb:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:dynamodb::${AWS::AccountId}:*' #global table 
+              - !Sub 'arn:${AWS::Partition}:ecs:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:elasticfilesystem:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:elasticache:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:es:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:elasticbeanstalk:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:elasticmapreduce:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:health:*::*'
+              - !Sub 'arn:${AWS::Partition}:iot:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:firehose:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:kinesis:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:rds:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:route53:::*'
+              - !Sub 'arn:${AWS::Partition}:s3:::*'
+              - !Sub 'arn:${AWS::Partition}:sns:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:sqs:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:redshift:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:lambda:*:${AWS::AccountId}:*'
+              - !Sub 'arn:${AWS::Partition}:xray:*:${AWS::AccountId}:*'
+  NewRelicCustomPolicyGeneric:
+    Type: 'AWS::IAM::ManagedPolicy'
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F5
+            reason: 'AWS does not support resource ARNs in the resource element of IAM policy statements. For AWS support, add “Resource”: “*” to your policy.'
+          - id: W13
+            reason: "New Relic requires permission to read telemetry data from all AWS resources in your account."
+          - id: W28
+            reason: "New Relic must use unique IAM role names to identify them."
+      cfn-lint:
+        config:
+          ignore_checks:
+            - EIAMPolicyWildcardResource #see Sid Integration2 under policy document
+    Condition: UseCustomPolicy
+    Properties:    
+      ManagedPolicyName: !Join ['-', [!Ref PolicyName, 'GenericResources']]
+      Roles:
+        - !Ref NewRelicCustomPolicyRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: Integration2 # These permissions does not support specifying a resource ARN in the Resource element of an IAM policy statement, exception for EIAMPolicyWildcardResource
+            Effect: Allow
+            Action:    
+              - 'tag:GetResources'
+              - 'support:DescribeTrustedAdvisorCheckRefreshStatuses'
+              - 'support:DescribeTrustedAdvisorCheckResult'
+              - 'support:DescribeTrustedAdvisorChecks'
+              - 'support:DescribeTrustedAdvisorCheckSummaries'
+              - 'support:RefreshTrustedAdvisorCheck'
+              - 'trustedadvisor:DescribeNotificationPreferences'
+              - 'trustedadvisor:DescribeReports'
+              - 'trustedadvisor:DescribeServiceMetadata'
+              - 'trustedadvisor:DescribeAccountAccess'
+              - 'trustedadvisor:DescribeCheckRefreshStatuses'
+              - 'trustedadvisor:DescribeCheckItems'
+              - 'trustedadvisor:DescribeAccount'
+              - 'trustedadvisor:DescribeOrganization'
+              - 'trustedadvisor:DescribeOrganizationAccounts'
+              - 'trustedadvisor:DescribeCheckSummaries'
+              - 'trustedadvisor:DescribeChecks'
+              - 's3:ListAllMyBuckets'
+              - 'elasticloadbalancing:DescribeLoadBalancers'
+              - 'elasticloadbalancing:DescribeTargetGroups'
+              - 'elasticloadbalancing:DescribeLoadBalancerAttributes'
+              - 'elasticloadbalancing:DescribeListeners'
+              - 'elasticloadbalancing:DescribeRules'
+              - 'elasticloadbalancing:DescribeTargetGroupAttributes'              
+              - 'elasticloadbalancing:DescribeInstanceHealth'              
+              - 'elasticloadbalancing:DescribeLoadBalancerPolicies'
+              - 'elasticloadbalancing:DescribeLoadBalancerPolicyTypes'
+              - 'autoscaling:DescribeLaunchConfigurations'
+              - 'autoscaling:DescribeAutoScalingGroups'
+              - 'autoscaling:DescribePolicies'
+              - 'autoscaling:DescribeTags'
+              - 'autoscaling:DescribeAccountLimits'
+              - 'cloudfront:ListDistributions'
+              - 'cloudfront:ListStreamingDistributions'
+              - 'cloudtrail:LookupEvents'
+              - 'dynamodb:DescribeLimits'
+              - 'dynamodb:ListTables'
+              - 'dynamodb:ListGlobalTables'
+              - 'ec2:DescribeVolumesModifications'
+              - 'ec2:DescribeVolumes'
+              - 'ec2:DescribeVolumeStatus'
+              - 'ec2:DescribeVolumeAttribute'
+              - 'ec2:DescribeInstanceStatus'
+              - 'ec2:DescribeInstances'
+              - 'ecs:ListClusters'
+              - 'es:ListDomainNames'
+              - 'elasticmapreduce:ListClusters'
+              - 'health:DescribeEvents'
+              - 'iam:ListSAMLProviders'
+              - 'iam:ListOpenIDConnectProviders'
+              - 'iam:ListServerCertificates'
+              - 'iam:GetAccountAuthorizationDetails'
+              - 'iam:ListVirtualMFADevices'
+              - 'iam:GetAccountSummary'
+              - 'iot:ListTopicRules'
+              - 'iot:ListThings'
+              - 'firehose:ListDeliveryStreams'
+              - 'kinesis:ListStreams'
+              - 'route53:ListHealthChecks'
+              - 'route53:ListHostedZones'
+              - 'ses:ListConfigurationSets'
+              - 'ses:GetSendQuota'
+              - 'ses:DescribeConfigurationSet'
+              - 'ses:ListReceiptFilters'
+              - 'ses:ListReceiptRuleSets'
+              - 'ses:DescribeReceiptRule'
+              - 'ses:DescribeReceiptRuleSet'
+              - 'sns:ListTopics'
+              - 'sqs:ListQueues'
+              - 'ec2:DescribeInternetGateways'
+              - 'ec2:DescribeVpcs'
+              - 'ec2:DescribeNatGateways'
+              - 'ec2:DescribeVpcEndpoints'
+              - 'ec2:DescribeSubnets'
+              - 'ec2:DescribeNetworkAcls'
+              - 'ec2:DescribeVpcAttribute'
+              - 'ec2:DescribeRouteTables'
+              - 'ec2:DescribeSecurityGroups'
+              - 'ec2:DescribeVpcPeeringConnections'
+              - 'ec2:DescribeNetworkInterfaces'
+              - 'ec2:DescribeVpnConnections'
+              - 'redshift:DescribeClusters'
+              - 'lambda:GetAccountSettings'
+              - 'lambda:ListFunctions'
+              - 'lambda:ListEventSourceMappings'
+              - 'cloudwatch:GetMetricStatistics'
+              - 'cloudwatch:ListMetrics'
+              - 'cloudwatch:GetMetricData'
+              - 'xray:BatchGetTraces'
+              - 'xray:GetInsightSummaries'
+              - 'xray:GetServiceGraph'
+              - 'xray:GetInsightImpactGraph'
+              - 'xray:GetTraceSummaries'
+              - 'xray:GetGroups'
+              - 'xray:GetSamplingStatisticSummaries'
+              - 'xray:GetTraceGraph'
+              - 'xray:GetSamplingRules'
+              - 'xray:GetEncryptionConfig'
+              - 'xray:GetSamplingTargets'
+              - 'xray:GetTimeSeriesServiceStatistics'
+              - 'xray:GetInsight'
+              - 'xray:GetInsightEvents'
+            Resource: '*'
+  RegisterToNewRelic:
+    Type: "AWS::CloudFormation::CustomResource"
+    DependsOn: NewRelicCustomPolicyRole
+    Properties:
+      ServiceToken: !Ref RegistrationSNS
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceRegion: !Ref 'AWS::Region'
