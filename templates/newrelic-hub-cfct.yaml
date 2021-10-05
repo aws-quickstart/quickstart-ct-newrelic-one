@@ -70,7 +70,7 @@ Parameters:
 Mappings: 
   SourceCode:
     Key:
-      Register: "functions/packages/NewRelicCfCTRegister.zip"
+      Register: "functions/packages/cfct_register/NewRelicCfCTRegister.zip"
       
 Resources:
   LambdaZipsBucket:
