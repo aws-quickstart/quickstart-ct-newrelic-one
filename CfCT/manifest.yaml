@@ -1,0 +1,36 @@
+---
+region: us-east-1
+version: 2021-03-15
+resources:
+    # NewRelic Hub stackset must be included in the manifest above the NewRelic spoke stackset
+  - name: newrelic-hub
+    resource_file: templates/newrelic-hub-cfct.yaml
+    parameter_file: parameters/newrelic-hub-cfct.json
+    deploy_method: stack_set
+    deployment_targets:
+      accounts:
+        - <ENTER HUB ACCOUNT ID>
+    export_outputs:
+      - name: /cfct/newrelic/hub/NewRelicRegisterSNS
+        value: $[output_NewRelicRegisterSNS]
+    regions:
+      - <ENTER CT HOME REGION>
+
+    # NewRelic spoke stackset must be included after the NewRelic hub
+  - name: newrelic-stackset
+    resource_file: templates/newrelic-stack-set-cfct.yaml
+    parameters: 
+      - parameter_key: RegistrationSNS 
+        parameter_value: '$[alfred_ssm_/cfct/newrelic/hub/NewRelicRegisterSNS]'
+      - parameter_key: NewRelicAccountNumber 
+        parameter_value: <ENTER NEWRELIC ACCOUNT NUMBER>
+      - parameter_key: NewRelicTrustedPrincipal 
+        parameter_value: '754728514883'
+      - parameter_key: PolicyName 
+        parameter_value: 'NewRelicIntegrationRole'
+    deploy_method: stack_set
+    deployment_targets:
+      organizational_units:
+        - <ENTER TARGET OU NAME>
+    regions:
+      - <ENTER CT HOME REGION>
