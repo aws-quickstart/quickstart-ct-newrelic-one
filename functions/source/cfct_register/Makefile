@@ -3,8 +3,6 @@ DIR_NAME = cfct_register
 FUNCTION = $(PROJECT)
 DIST_DIR ?= "$(BASE)"/functions/packages/$(DIR_NAME)
 $(shell mkdir -p $(DIST_DIR))
-PYTHON_DEST_DIR := $(DESTDIR)/$(call realpath,$(shell python -c 'import sys; print sys.exec_prefix')/lib/python$(shell python -c 'import sys; print sys.version[:3]')/site-packages)
-
 
 all: build
 
@@ -15,10 +13,10 @@ clean:
 
 build: clean
 	mkdir -p build
+	rm -f $(DIST_DIR)/$(FUNCTION).zip
 	zip -r $(DIST_DIR)/$(FUNCTION).zip . -x "*.DS_Store*" "*.git*" "build*" "Makefile" "requirements.txt"
 	python3 -m venv build/$(FUNCTION)
 	. build/$(FUNCTION)/bin/activate; \
-	pip3 install  -r requirements.txt; \
-	cp -r $$VIRTUAL_ENV/lib/python3.7/site-packages/ build/site-packages
-	cd build/site-packages; zip -g -r $(DIST_DIR)/$(FUNCTION).zip . -x "*__pycache__*"
+	pip3 install  -r requirements.txt -t build/lib/; \
+	cd build/lib/; zip -g -r $(DIST_DIR)/$(FUNCTION).zip . -x "*__pycache__*"
 	rm -rf build

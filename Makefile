@@ -1,5 +1,5 @@
-BUCKET_PREFIX := wellsiau-quickstart
-KEY_PREFIX := newrelic
+BUCKET_PREFIX := aws-quickstart
+KEY_PREFIX := quickstart-ct-newrelic-one
 CFT_PREFIX := templates
 CFT_DIR := templates
 
