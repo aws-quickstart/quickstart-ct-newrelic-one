@@ -1,7 +1,5 @@
-
-BUCKET_PREFIX := newrelic-aws-quickstart
-KEY_PREFIX := control-tower
-PACKAGES_PREFIX := lambda_packages/
+BUCKET_PREFIX := wellsiau-quickstart
+KEY_PREFIX := newrelic
 CFT_PREFIX := templates
 CFT_DIR := templates
 
@@ -16,8 +14,7 @@ s3_buckets := $(BUCKET_PREFIX)
 TOPTARGETS := all clean package build 
 
 SUBDIRS := $(wildcard functions/source/*/.)
-ZIP_SUBDIRS := $(wildcard functions/packages/*/.)
-
+ZIP_SUBDIRS := $(wildcard functions/packages/*)
 ZIP_FILES := $(shell find $(ZIP_SUBDIRS) -type f -name '*.zip')
 
 $(TOPTARGETS): $(SUBDIRS)
@@ -42,6 +39,6 @@ $(ZIP_SUBDIRS): $(ZIP_FILES)
 
 $(ZIP_FILES):
 	$(info [+] Uploading zip files to $(BUCKET_NAME) bucket)
-	@aws --profile $(PROFILE) --region $(REGION) s3 cp $@ s3://$(BUCKET_NAME)/$(KEY_PREFIX)/$(PACKAGES_PREFIX) --acl public-read
+	@aws --profile $(PROFILE) --region $(REGION) s3 cp $@ s3://$(BUCKET_NAME)/$(KEY_PREFIX)/$(@) --acl public-read
 
 .PHONY: $(TOPTARGETS) $(SUBDIRS) $(s3_buckets) $(ZIP_FILES)
