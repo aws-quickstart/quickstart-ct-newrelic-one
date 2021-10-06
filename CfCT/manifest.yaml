@@ -5,7 +5,19 @@ resources:
     # NewRelic Hub stackset must be included in the manifest above the NewRelic spoke stackset
   - name: newrelic-hub
     resource_file: templates/newrelic-hub-cfct.yaml
-    parameter_file: parameters/newrelic-hub-cfct.json
+    parameters:
+      - parameter_key: NewRelicAccountNumber 
+        parameter_value: <ENTER NEWRELIC ACCOUNT NUMBER>
+      - parameter_key: NewRelicAccessKey 
+        parameter_value: <USE SSM TO STORE NEWRELIC ACCESS KEY>
+      - parameter_key: NerdGraphEndpoint 
+        parameter_value: 'https://api.newrelic.com/graphql'   
+      - parameter_key: OrgId 
+        parameter_value: <ENTER AWS ORG ID>
+      - parameter_key: QSS3BucketName 
+        parameter_value: 'aws-quickstart'   
+      - parameter_key: QSS3KeyPrefix 
+        parameter_value: 'quickstart-ct-newrelic-one/'   
     deploy_method: stack_set
     deployment_targets:
       accounts:
