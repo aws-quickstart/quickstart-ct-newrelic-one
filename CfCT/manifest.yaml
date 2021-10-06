@@ -31,7 +31,9 @@ resources:
     # NewRelic spoke stackset must be included after the NewRelic hub
   - name: newrelic-stackset
     resource_file: templates/newrelic-stack-set-cfct.yaml
-    parameters: 
+    parameters:
+      - parameter_key: AllowCrossAccountAccess 
+        parameter_value: <ENTER true TO EXPLICITLY AGREE CROSS ACCOUNT ACCESS>
       - parameter_key: RegistrationSNS 
         parameter_value: '$[alfred_ssm_/cfct/newrelic/hub/NewRelicRegisterSNS]'
       - parameter_key: NewRelicAccountNumber 

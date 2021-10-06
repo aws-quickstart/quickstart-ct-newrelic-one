@@ -23,11 +23,23 @@ Parameters:
   RegistrationSNS:
     Type: String
     Description: ARN of the SNS in hub account to trigger New Relic account registration
-
+  AllowCrossAccountAccess:
+    Type: String
+    AllowedValues:
+      - true
+      - false
+    Default: false
+    Description: This template will provision IAM role(s) to allow NewRelic to assume role in your AWS account. Select "true" to agree with deploying this resources.
 Conditions: 
   UseCustomPolicy: !Not [!Equals [ !Ref PolicyName, '']]
   UseDefaultPolicy: !Equals [ !Ref PolicyName, '']
-  
+Rules:
+  ExplicitAllowCrossAccountAccess:
+    Assertions:
+      - Assert: !Equals
+        - !Ref AllowCrossAccountAccess
+        - 'true'
+        AssertDescription: 'You must explicitly agree to allow cross access access by selecting true'
 Resources:
   NewRelicDefaultPolicyRole:
     Type: 'AWS::IAM::Role'
