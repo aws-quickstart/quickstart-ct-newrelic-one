@@ -317,8 +317,19 @@ Resources:
               - 'xray:GetInsight'
               - 'xray:GetInsightEvents'
             Resource: '*'
-  RegisterToNewRelic:
+ 
+  RegisterToNewRelicDefault:
     Type: "AWS::CloudFormation::CustomResource"
+    Condition: UseDefaultPolicy
+    DependsOn: NewRelicDefaultPolicyRole
+    Properties:
+      ServiceToken: !Ref RegistrationSNS
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceRegion: !Ref 'AWS::Region'
+
+  RegisterToNewRelicCustom:
+    Type: "AWS::CloudFormation::CustomResource"
+    Condition: UseCustomPolicy
     DependsOn: NewRelicCustomPolicyRole
     Properties:
       ServiceToken: !Ref RegistrationSNS
