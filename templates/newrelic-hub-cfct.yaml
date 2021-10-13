@@ -1,0 +1,308 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: AWS CfCT stack for New Relic designated hub account. This deployment launches as a stack set in your AWS Control Tower landing zone (qs-1rsuloqd4)
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Parameters for deploying New Relic AWS Control Tower integration"
+  AWS::CloudFormation::Interface: 
+    ParameterGroups:
+      - Label:
+          default: "New Relic configuration"
+        Parameters:
+          - NewRelicAccountNumber
+          - NewRelicAccessKey
+          - NerdGraphEndpoint
+          - OrgId
+      - Label:
+          default: "AWS Quick Start configuration"
+        Parameters:
+          - QSS3BucketName
+          - QSS3KeyPrefix
+    ParameterLabels:
+      NewRelicAccountNumber:
+        default: New Relic account ID
+      NewRelicAccessKey:
+        default: New Relic NerdGraph User key
+      NerdGraphEndpoint:
+        default: New Relic NerdGraph API endpoint
+      OrgId:
+        default: AWS Control Tower Org Id
+      QSS3BucketName:
+        default: Quick Start S3 bucket name.
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix.
+
+Parameters:
+  NewRelicAccountNumber:
+    Type: String
+    NoEcho: true
+    Description: New Relic account ID. See https://docs.newrelic.com/docs/accounts/accounts-billing/account-setup/account-id/
+    AllowedPattern: '[0-9]+'
+    ConstraintDescription: New Relic account ID contains only numbers
+  NewRelicAccessKey:
+    Type: String
+    NoEcho: true
+    AllowedPattern: '^([A-Z0-9-]){32}$'
+    ConstraintDescription: New Relic User key is 32 characters long, and contains only numbers and letters
+    Description: New Relic NerdGraph User key. See https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys/#user-api-key
+  NerdGraphEndpoint:
+    Type: String
+    Description: New Relic NerdGraph endpoint URL. Use default unless your New Relic account uses an EU data center. See https://docs.newrelic.com/docs/apis/nerdgraph/get-started/introduction-new-relic-nerdgraph/#authentication
+    Default: 'https://api.newrelic.com/graphql'
+    AllowedValues:
+      - 'https://api.newrelic.com/graphql'
+      - 'https://api.eu.newrelic.com/graphiql'
+  QSS3BucketName:
+    Type: String
+    Default: aws-quickstart
+    Description: "S3 bucket for Quick Start assets. Use this if you want to customize your deployment. The bucket name can include numbers, lowercase letters, uppercase letters, and hyphens, but it cannot start or end with hyphens (-)."
+  QSS3KeyPrefix:
+    Type: String
+    Default: quickstart-ct-newrelic-one/
+    Description: "S3 key prefix to simulate a directory for Quick Start assets. Use this if you want to customize your deployment. The prefix can include numbers, lowercase letters, uppercase letters, hyphens (-), and forward slashes (/). For more information, see https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html."
+  OrgId:
+    Type: String
+    Description: The Amazon Organizations ID
+    MinLength: 12
+    MaxLength: 12
+    AllowedPattern: '^[o][\-][a-z0-9]{10}$'
+    ConstraintDescription: The Org Id must be a 12 character string starting with o- and followed by 10 lower case alphanumeric characters
+
+Mappings: 
+  SourceCode:
+    Key:
+      Register: "functions/packages/cfct_register/NewRelicCfCTRegister.zip"
+      
+Resources:
+  LambdaZipsBucket:
+    Type: AWS::S3::Bucket
+
+  CopyZips:
+    Type: Custom::CopyZips
+    Properties:
+      ServiceToken: !GetAtt 'CopyZipsFunction.Arn'
+      DestBucket: !Ref 'LambdaZipsBucket'
+      SourceBucket: !Ref 'QSS3BucketName'
+      Prefix: !Ref 'QSS3KeyPrefix'
+      Objects:
+        - !FindInMap ["SourceCode", "Key", "Register"]
+
+  CopyZipsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+      Path: /
+      Policies:
+        - PolicyName: lambda-copier
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:GetObjectTagging
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:s3:::${QSS3BucketName}/${QSS3KeyPrefix}*'
+              - Effect: Allow
+                Action:
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:PutObjectTagging
+                Resource:
+                  - !Sub 'arn:${AWS::Partition}:s3:::${LambdaZipsBucket}/${QSS3KeyPrefix}*'
+
+  CopyZipsFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Copies objects from the S3 bucket to a new location.
+      Handler: index.handler
+      Runtime: python3.7
+      Role: !GetAtt 'CopyZipsRole.Arn'
+      Timeout: 240
+      Code:
+        ZipFile: |
+          import json
+          import logging
+          import threading
+          import boto3
+          import cfnresponse
+          def copy_objects(source_bucket, dest_bucket, prefix, objects):
+              s3 = boto3.client('s3')
+              for o in objects:
+                  key = prefix + o
+                  copy_source = {
+                      'Bucket': source_bucket,
+                      'Key': key
+                  }
+                  print('copy_source: %s' % copy_source)
+                  print('dest_bucket = %s'%dest_bucket)
+                  print('key = %s' %key)
+                  s3.copy_object(CopySource=copy_source, Bucket=dest_bucket,
+                        Key=key)
+          def delete_objects(bucket, prefix, objects):
+              s3 = boto3.client('s3')
+              objects = {'Objects': [{'Key': prefix + o} for o in objects]}
+              s3.delete_objects(Bucket=bucket, Delete=objects)
+          def timeout(event, context):
+              logging.error('Execution is about to time out, sending failure response to CloudFormation')
+              cfnresponse.send(event, context, cfnresponse.FAILED, {}, None)
+          def handler(event, context):
+              # make sure we send a failure to CloudFormation if the function
+              # is going to timeout
+              timer = threading.Timer((context.get_remaining_time_in_millis()
+                        / 1000.00) - 0.5, timeout, args=[event, context])
+              timer.start()
+              print('Received event: %s' % json.dumps(event))
+              status = cfnresponse.SUCCESS
+              try:
+                  source_bucket = event['ResourceProperties']['SourceBucket']
+                  dest_bucket = event['ResourceProperties']['DestBucket']
+                  prefix = event['ResourceProperties']['Prefix']
+                  objects = event['ResourceProperties']['Objects']
+                  if event['RequestType'] == 'Delete':
+                      delete_objects(dest_bucket, prefix, objects)
+                  else:
+                      copy_objects(source_bucket, dest_bucket, prefix, objects)
+              except Exception as e:
+                  logging.error('Exception: %s' % e, exc_info=True)
+                  status = cfnresponse.FAILED
+              finally:
+                  timer.cancel()
+                  cfnresponse.send(event, context, status, {}, None)
+
+  NewRelicCredentials:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Description: NewRelic API Credentials
+      Name: NewRelicAPICredential
+      SecretString:
+        Fn::Join:
+        - ''
+        - - '{"AccessKey":"'
+          - Ref: NewRelicAccessKey
+          - '"}'
+
+  NewRelicRegisterSNS:
+    Type: AWS::SNS::Topic
+
+  NewRelicRegisterSNSLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !GetAtt NewRelicRegisterFunction.Arn
+      Principal: sns.amazonaws.com
+      SourceArn: !Ref NewRelicRegisterSNS
+
+  NewRelicRegisterSNSSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Endpoint: !GetAtt NewRelicRegisterFunction.Arn
+      Protocol: lambda
+      TopicArn: !Ref NewRelicRegisterSNS
+
+  NewRelicRegisterSNSTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: F18
+            reason: "Principal uses * and limited with condition key for aws:PrincipalOrgID"
+    Properties:
+      Topics: [!Ref NewRelicRegisterSNS]
+      PolicyDocument:
+        Version: '2012-10-17'
+        Id: '__default_policy_ID'
+        Statement:
+        - Sid: grant-publish
+          Effect: Allow
+          Principal:
+            AWS: '*'
+          Resource: !Ref NewRelicRegisterSNS
+          Action:
+            - SNS:Publish
+          Condition:
+            StringEquals:
+              aws:PrincipalOrgID: !Ref OrgId
+        - Sid: grant-receive
+          Effect: Allow
+          Principal:
+            Service: 'lambda.amazonaws.com'
+          Resource: !Ref NewRelicRegisterSNS
+          Action:
+            - SNS:Subscribe
+            - SNS:Receive
+          Condition:
+            StringEquals:
+              AWS:SourceOwner: !Sub '${AWS::AccountId}'
+            ArnLike:
+              aws:SourceArn: !GetAtt NewRelicRegisterFunction.Arn
+
+  NewRelicDLQ:
+    Type: AWS::SQS::Queue
+    Properties: 
+      MessageRetentionPeriod: 1209600
+  
+  NewRelicRegisterFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: Register_Operations
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Sid: SecretRead
+            Effect: Allow
+            Action:
+            - secretsmanager:GetSecretValue
+            Resource:
+              Ref: NewRelicCredentials
+          - Sid: SQSOps
+            Effect: Allow
+            Action:
+            - sqs:SendMessage
+            - sqs:DeleteMessage
+            - sqs:ReceiveMessage
+            - sqs:GetQueueAttributes
+            Resource: 
+            - !GetAtt NewRelicDLQ.Arn
+      ManagedPolicyArns:
+      - !Sub 'arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+  
+  NewRelicRegisterFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: CopyZips
+    Properties:
+      Code:
+        S3Bucket: !Ref LambdaZipsBucket
+        S3Key: !Join ['', [!Ref 'QSS3KeyPrefix', !FindInMap ["SourceCode", "Key", "Register"]]]
+      Handler: cfct_register.lambda_handler
+      Runtime: python3.7
+      Timeout: 120
+      ReservedConcurrentExecutions: 5
+      Environment:
+        Variables:
+          newRelicAccId: !Ref NewRelicAccountNumber
+          newRelicSecret: !Ref NewRelicCredentials
+          newRelicDLQ: !Ref NewRelicDLQ
+          nerdGraphEndPoint: !Ref NerdGraphEndpoint
+      Role: !GetAtt NewRelicRegisterFunctionRole.Arn
+
+Outputs:
+  NewRelicRegisterSNS:
+    Description: NewRelic Hub Register SNS topic
+    Value: !Ref NewRelicRegisterSNS

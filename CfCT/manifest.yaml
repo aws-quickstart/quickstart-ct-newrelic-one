@@ -1,0 +1,50 @@
+---
+region: us-east-1
+version: 2021-03-15
+resources:
+    # NewRelic Hub stackset must be included in the manifest above the NewRelic spoke stackset
+  - name: newrelic-hub
+    resource_file: templates/newrelic-hub-cfct.yaml
+    parameters:
+      - parameter_key: NewRelicAccountNumber 
+        parameter_value: <ENTER NEWRELIC ACCOUNT NUMBER>
+      - parameter_key: NewRelicAccessKey 
+        parameter_value: <USE SSM TO STORE NEWRELIC ACCESS KEY>
+      - parameter_key: NerdGraphEndpoint 
+        parameter_value: 'https://api.newrelic.com/graphql'   
+      - parameter_key: OrgId 
+        parameter_value: <ENTER AWS ORG ID>
+      - parameter_key: QSS3BucketName 
+        parameter_value: 'aws-quickstart'   
+      - parameter_key: QSS3KeyPrefix 
+        parameter_value: 'quickstart-ct-newrelic-one/'   
+    deploy_method: stack_set
+    deployment_targets:
+      accounts:
+        - <ENTER HUB ACCOUNT ID>
+    export_outputs:
+      - name: /cfct/newrelic/hub/NewRelicRegisterSNS
+        value: $[output_NewRelicRegisterSNS]
+    regions:
+      - <ENTER CT HOME REGION>
+
+    # NewRelic spoke stackset must be included after the NewRelic hub
+  - name: newrelic-stackset
+    resource_file: templates/newrelic-stack-set-cfct.yaml
+    parameters:
+      - parameter_key: AllowCrossAccountAccess 
+        parameter_value: <ENTER true TO EXPLICITLY AGREE CROSS ACCOUNT ACCESS>
+      - parameter_key: RegistrationSNS 
+        parameter_value: '$[alfred_ssm_/cfct/newrelic/hub/NewRelicRegisterSNS]'
+      - parameter_key: NewRelicAccountNumber 
+        parameter_value: <ENTER NEWRELIC ACCOUNT NUMBER>
+      - parameter_key: NewRelicTrustedPrincipal 
+        parameter_value: '754728514883'
+      - parameter_key: PolicyName 
+        parameter_value: 'NewRelicIntegrationRole'
+    deploy_method: stack_set
+    deployment_targets:
+      organizational_units:
+        - <ENTER TARGET OU NAME>
+    regions:
+      - <ENTER CT HOME REGION>

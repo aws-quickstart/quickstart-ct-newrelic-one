@@ -1,83 +1,55 @@
 import boto3, json, time, os, logging, botocore, requests
 from botocore.exceptions import ClientError
+from crhelper import CfnResource
 
+# Set logging verbosity
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+if 'log_level' in os.environ:
+    logger.setLevel(os.environ['log_level'])
+    logger.info("Log level set to %s" % logger.getEffectiveLevel())
+else:
+    logger.setLevel(logging.INFO)
 logging.getLogger('boto3').setLevel(logging.CRITICAL)
 logging.getLogger('botocore').setLevel(logging.CRITICAL)
+
 session = boto3.Session()
+helper = CfnResource(json_logging=False, log_level='INFO', boto_level='CRITICAL', sleep_on_delete=15)
 
-def message_processing(messages):
-    target_stackset = {}
-    for message in messages:
-        payload = json.loads(message['Sns']['Message'])
-        stackset_check(payload)
-
-def stackset_check(messages):
-    cloudFormationClient = session.client('cloudformation')
-    sqsClient = session.client('sqs')
-    snsClient = session.client('sns')
-    newRelicRegisterSNS = os.environ['newRelicRegisterSNS']
-    newRelicDLQ = os.environ['newRelicDLQ']
-    
-    for stackSetName, params in messages.items():
-        logger.info("Checking stack set instances: {} {}".format(stackSetName, params['OperationId']))
-        try:
-            stackset_status = cloudFormationClient.describe_stack_set_operation(
-                StackSetName=stackSetName,
-                OperationId=params['OperationId']
-            )
-            if 'StackSetOperation' in stackset_status:
-                if stackset_status['StackSetOperation']['Status'] in ['RUNNING','STOPPING','QUEUED',]:
-                    logger.info("Stackset operation still running")
-                    messageBody = {}
-                    messageBody[stackSetName] = {'OperationId': params['OperationId']}
-                    try:
-                        logger.info("Sleep and wait for 20 seconds")
-                        time.sleep(20)
-                        snsResponse = snsClient.publish(
-                            TopicArn=newRelicRegisterSNS,
-                            Message = json.dumps(messageBody))
-
-                        logger.info("Re-queued for registration: {}".format(snsResponse))
-                    except Exception as snsException:
-                        logger.error("Failed to send queue for registration: {}".format(snsException))
-                
-                elif stackset_status['StackSetOperation']['Status'] in ['SUCCEEDED']:
-                    logger.info("Start registration")
-                    cloudFormationPaginator = cloudFormationClient.get_paginator('list_stack_set_operation_results')
-                    stackset_iterator = cloudFormationPaginator.paginate(
-                        StackSetName=stackSetName,
-                        OperationId=params['OperationId']
-                    )
-                    
-                    newRelicSecret = os.environ['newRelicSecret']
-                    newRelicAccId = os.environ['newRelicAccId']
-                    newRelicAccessKey = get_secret_value(newRelicSecret)
-                    newRelicIntegrationList = newrelic_get_schema(newRelicAccessKey)
-                    
-                    if newRelicAccessKey:
-                        for page in stackset_iterator:
-                            if 'Summaries' in page:
-                                for operation in page['Summaries']:
-                                    if operation['Status'] in ('SUCCEEDED'):
-                                        targetAccount = operation['Account']
-                                        newrelic_registration(targetAccount, newRelicAccessKey, newRelicAccId, newRelicIntegrationList)
-                    
-                elif stackset_status['StackSetOperation']['Status'] in ['FAILED','STOPPED']:
-                    logger.warning("Stackset operation failed/stopped")
-                    messageBody = {}
-                    messageBody[stackSetName] = {'OperationId': params['OperationId']}
-                    try:
-                        sqsResponse = sqsClient.send_message(
-                            QueueUrl=newRelicDLQ,
-                            MessageBody=json.dumps(messageBody))
-                        logger.info("Sent to DLQ: {}".format(sqsResponse))
-                    except Exception as sqsException:
-                        logger.error("Failed to send to DLQ: {}".format(sqsException))
+@helper.create
+def create(event, context):
+    try:
+        logger.info(event)
+        if event['RequestType'] in ['Create']:
+            targetAccount = event['ResourceProperties']['SourceAccount']
+            newRelicSecret = os.environ['newRelicSecret']
+            newRelicAccId = os.environ['newRelicAccId']
+            newRelicAccessKey = get_secret_value(newRelicSecret)
+            
+            if newRelicAccessKey:
+                newRelicIntegrationList = newrelic_get_schema(newRelicAccessKey)
+                newrelic_registration(targetAccount, newRelicAccessKey, newRelicAccId, newRelicIntegrationList)
+            else:
+                logger.error("Unable to find the NewRelic secret token, skipping")
+                send_to_dlq(event)        
+        else:
+            logger.info("Non stackset instance create event, skipping")
         
-        except Exception as e:
-            logger.error(e)
+    except Exception as describeException:
+        logger.info('Error : {}'.format(describeException))
+        send_to_dlq(event)
+    
+    return None #Generate random ID
+
+def send_to_dlq(event):
+    try:
+        sqsClient = session.client('sqs')
+        newRelicDLQ = os.environ['newRelicDLQ']
+        sqsResponse = sqsClient.send_message(
+            QueueUrl=newRelicDLQ,
+            MessageBody=json.dumps(event))
+        logger.info("Sent to DLQ: {}".format(event))
+    except Exception as sqsException:
+        logger.error("Failed to send to DLQ: {}".format(sqsException))
 
 def get_secret_value(secret_arn):
     secretClient = session.client('secretsmanager')
@@ -91,6 +63,7 @@ def get_secret_value(secret_arn):
     
     except Exception as e:
         logger.error('Get Secret Failed: ' + str(e))
+        return False
     
 def newrelic_registration(aws_account_id, access_key, newrelic_account_id, newrelic_integration_list):
     role_arn =  'arn:aws:iam::{}:role/NewRelicIntegrationRole_{}'.format(aws_account_id, newrelic_account_id)
@@ -243,11 +216,15 @@ def newrelic_get_schema(access_key):
     except Exception as e:
         logger.error(e)
 
-
+# CfCT Register lambda handler 
+# only takes signal from SNS topic, based on cloudformation custom resource sent by spoke account via stackset
 def lambda_handler(event, context):
     logger.info(json.dumps(event))
     try:
-        if 'Records' in event:
-            message_processing(event['Records'])
+        if 'Records' in event: 
+            messages = event['Records']
+            for message in messages:
+                payload = json.loads(message['Sns']['Message'])
+                helper(payload, context)
     except Exception as e:
-        logger.error(e)
+        helper.init_failure(e)

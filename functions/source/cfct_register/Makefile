@@ -1,5 +1,5 @@
-PROJECT = NewRelicCTRegister
-DIR_NAME = register
+PROJECT = NewRelicCfCTRegister
+DIR_NAME = cfct_register
 FUNCTION = $(PROJECT)
 DIST_DIR ?= "$(BASE)"/functions/packages/$(DIR_NAME)
 $(shell mkdir -p $(DIST_DIR))
