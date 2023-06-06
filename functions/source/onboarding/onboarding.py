@@ -43,6 +43,42 @@ def create(event, context):
                     'ParameterValue': newRelicAccId,
                     'UsePreviousValue': False,
                     'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'NewRelicLicenseKey',
+                    'ParameterValue': os.environ['NewRelicLicenseKey'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'NewRelicDatacenter',
+                    'ParameterValue': os.environ['NewRelicDatacenter'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'CloudWatchMetricsStreamingTemplateURL',
+                    'ParameterValue': os.environ['CloudWatchMetricsStreamingTemplateURL'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'CloudWatchMetricStreamName',
+                    'ParameterValue': os.environ['CloudWatchMetricStreamName'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'FirehoseStreamName',
+                    'ParameterValue': os.environ['FirehoseStreamName'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'S3BackupBucketName',
+                    'ParameterValue': os.environ['S3BackupBucketName'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
                 }
             ],
             Capabilities=[

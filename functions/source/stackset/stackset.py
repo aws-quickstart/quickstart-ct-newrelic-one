@@ -80,7 +80,10 @@ def lifecycle_processing(event):
         account_id = event['detail']['serviceEventDetails']['createManagedAccountStatus']['account']['accountId']
         stackSetName = os.environ["stackSetName"]
         stackset_instances = list_stack_instance_by_account(session, stackSetName, account_id)
-        stackset_instances_regions = list_stack_instance_region(session, stackSetName)
+        if event['region'] is not None:
+            stackset_instances_regions = event['region'].split(" ")
+        else:
+            stackset_instances_regions = list_stack_instance_region(session, stackSetName)
         
         logger.info("Processing Lifecycle event for {}".format(account_id))
         #stackset instance does not exist, create a new one
