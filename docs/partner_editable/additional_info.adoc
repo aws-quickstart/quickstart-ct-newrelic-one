@@ -1,6 +1,6 @@
 == Test the deployment
 
-When you enroll a new AWS Control Tower–managed account, the deployment sets up the IAM role for {partner-product-short-name}. You can then see the new account show up in the New Relic UI.
+When you enroll a new AWS Control Tower–managed account, the deployment sets up the IAM role and Metrics Streaming Resources for {partner-product-short-name}. You can then see the new account show up in the New Relic UI.
 
 . https://one.newrelic.com[Log in^] to your New Relic account.
 . To view your AWS data, see https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/introduction-aws-integrations/#insights[Introduction to AWS integrations^].
@@ -15,7 +15,7 @@ WARNING: Deleting the {partner-product-short-name} Quick Start stack and StackSe
 The time to complete this step depends on how many AWS accounts are included in your {partner-product-name} deployment. If deleting the AWS CloudFormation stack times out, it's safe to retry this step.
 
 . Sign in to the https://console.aws.amazon.com/console/home[AWS CloudFormation console^] in your Control Tower management account.
-. To remove all of the deployed AWS resources, delete the {partner-product-name} stack. This also deletes all stack set instances, which include any IAM roles deployed for enrolled AWS accounts. 
+. To remove all of the deployed AWS resources, delete the {partner-product-name} stack. This also deletes all stack set instances, which include any IAM roles and Metrics Streaming Resources deployed for enrolled AWS accounts. 
 . When the stack is deleted, navigate to AWS CloudFormation https://console.aws.amazon.com/cloudformation/home#/stacksets[StackSet^], and search for the New Relic stack set to confirm it was removed.
 
 === Uninstall the New Relic integration

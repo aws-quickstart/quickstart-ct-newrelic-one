@@ -31,3 +31,7 @@ In case you've already set up your landing zone, and want to monitor existing AW
 * Log in to an AWS Control Tower management account.
 * For a list of managed accounts, navigate to https://console.aws.amazon.com/controltower/home/accounts?[AWS Control Tower^].
 * Add your AWS account IDs.
+. {partner-company-name} license key
++
+To export metrics to your New Relic account, you must have a license key. To generate a new key, refer to https://docs.newrelic.com/docs/apis/intro-apis/new-relic-api-keys [New Relic API keys^].
++
