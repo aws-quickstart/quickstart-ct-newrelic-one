@@ -11,6 +11,20 @@ Metadata:
           - NewRelicAccountNumber
           - NewRelicAccessKey
           - NerdGraphEndpoint
+          - NewRelicLicenseKey
+          - NewRelicDatacenter
+      - Label:
+          default: Delivery Stream configuration
+        Parameters:
+          - CloudWatchMetricsStreamingTemplateURL
+          - CloudWatchMetricStreamName
+          - FirehoseStreamName
+          - S3BackupBucketName
+      - Label:
+          default: AWS Config details
+        Parameters:
+          - CreateConfigService
+          - S3ConfigBucketName
       - Label:
           default: "Deployment configuration"
         Parameters:
@@ -23,6 +37,26 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
     ParameterLabels:
+      NewRelicLicenseKey:
+        default: >-
+          The license key associated with the account you wish to export metrics
+          to
+      NewRelicDatacenter:
+        default: >-
+          Identification of the New Relic datacenter your metrics are exported
+          to
+      CloudWatchMetricsStreamingTemplateURL:
+        default: Template URL of Cloudwatch Metrics Streaming Resources
+      CloudWatchMetricStreamName:
+        default: Name of new CloudWatch Metric Stream
+      FirehoseStreamName:
+        default: Name of new Kinesis Firehose Delivery Stream
+      S3BackupBucketName:
+        default: Name of new S3 Bucket - Destination for failed events
+      CreateConfigService:
+        default: Enable and configure AWS Config to track changes in resources
+      S3ConfigBucketName:
+        default: Name of new S3 Bucket - Destination for delivery channel configuration
       NewRelicAccountNumber:
         default: New Relic account ID
       NewRelicAccessKey:
@@ -40,6 +74,58 @@ Metadata:
       QSS3KeyPrefix:
         default: Quick Start S3 key prefix.
 Parameters:
+  NewRelicLicenseKey:
+    Type: String
+    NoEcho: true
+    Description: The license key associated with the account you wish to export metrics to
+    AllowedPattern: '^[A-Za-z0-9]{40}$'
+    ConstraintDescription: New Relic ingestKey is 40-character Hexadecimal String
+  NewRelicDatacenter:
+    Type: String
+    Description: New Relic datacenter your metrics are exported to
+    Default: US
+    AllowedValues:
+      - US
+      - EU
+  CloudWatchMetricsStreamingTemplateURL:
+    Type: String
+    Default: >-
+      https://aws-quickstart.s3.amazonaws.com/quickstart-ct-newrelic-one/templates/MetricStreams_CloudFormation.yml
+    Description: S3 Url of cloudwatch metric stream template
+  CloudWatchMetricStreamName:
+    Type: String
+    Default: CT-NewRelic-CloudWatchMetricStream
+    Description: >-
+      Name of new CloudWatch Metric Stream(must be unique per AWS account in the
+      same AWS Region)
+  FirehoseStreamName:
+    Type: String
+    Default: CT-NewRelic-FirehoseStream
+    Description: >-
+      Name of new Kinesis Firehose Delivery Stream (must be unique per AWS
+      account in the same AWS Region)
+  S3BackupBucketName:
+    Type: String
+    Default: quickstart-ct-newrelic-one-default
+    Description: >-
+      Name of new S3 Bucket Destination for failed events (must be globally
+      unique across all AWS accounts in all AWS Regions within a partition)
+  CreateConfigService:
+    Type: String
+    Description: >-
+      Enable and configure AWS Config to track resource changes. This allows you
+      a complete monitoring New Relic experience
+    Default: 'true'
+    AllowedValues:
+      - 'true'
+      - 'false'
+  S3ConfigBucketName:
+    Type: String
+    Default: quickstart-ct-newrelic-one
+    Description: >-
+      Name of new S3 Bucket Destination for delivery channel configuration (must
+      be globally unique across all AWS accounts in all AWS Regions within a
+      partition)
   NewRelicAccountNumber:
     Type: String
     NoEcho: true
@@ -205,6 +291,14 @@ Resources:
           stackSetUrl: !Ref StackSetUrl
           newRelicSecret: !Ref NewRelicCredentials
           newRelicStackSNS: !Ref NewRelicStackSNS
+          S3ConfigBucketName: !Ref S3ConfigBucketName
+          CreateConfigService: !Ref CreateConfigService
+          S3BackupBucketName: !Ref S3BackupBucketName
+          FirehoseStreamName: !Ref FirehoseStreamName
+          CloudWatchMetricStreamName: !Ref CloudWatchMetricStreamName
+          CloudWatchMetricsStreamingTemplateURL: !Ref CloudWatchMetricsStreamingTemplateURL
+          NewRelicDatacenter: !Ref NewRelicDatacenter
+          NewRelicLicenseKey: !Ref NewRelicLicenseKey
       Role: !GetAtt NewRelicOnboardingFunctionRole.Arn
 
   NewRelicOnboardingFunctionRole:

@@ -1,0 +1,161 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Configures CloudWatch metric stream and Kinesis Data Firehose to send metrics to New Relic.(qs-1u8uthf5u)
+Mappings:
+  DatacenterMap:
+    NewRelicDatacenter:
+      US: 'https://aws-api.newrelic.com/cloudwatch-metrics/v1'
+      EU: 'https://aws-api.eu01.nr-data.net/cloudwatch-metrics/v1'
+Parameters:
+  NewRelicLicenseKey:
+    Type: String
+    Description: 40-character hexadecimal string
+    NoEcho: true
+    MaxLength: 40
+  NewRelicDatacenter:
+    Type: String
+    Description: EU keys are prefixed with eu0x, US otherwise
+    Default: US
+    AllowedValues: [US, EU]
+  FirehoseStreamName:
+    Type: String
+    Description: Name of new Kinesis Firehose Delivery Stream (must be unique per AWS account in the same AWS Region)
+    Default: NewRelic-Delivery-Stream
+    MaxLength: 64
+    AllowedPattern: "[a-zA-Z0-9_.-]+"
+    ConstraintDescription: must only container letters (uppercase and lowercase), numbers, and characters '.', '_', and '-' with max length of 64 total characters
+  CloudWatchMetricStreamName:
+    Type: String
+    Description: Name of new CloudWatch Metric Stream (must be unique per AWS account in the same AWS Region)
+    Default: NewRelic-Metric-Stream
+    MaxLength: 255
+    AllowedPattern: "[a-zA-Z0-9_-]+"
+    ConstraintDescription: must only container letters (uppercase and lowercase), numbers, and characters '_', and '-' with max length of 255 total characters
+  S3BackupBucketName:
+    Type: String
+    Description: S3 Bucket Destination for failed events (must be globally unique across all AWS accounts in all AWS Regions within a partition).(qs-1u8uthf5u)
+    Default: firehose-backup
+    MinLength: 3
+    MaxLength: 63
+    AllowedPattern: (?!(^xn--|-s3alias$))^[a-z0-9.][a-z0-9-.]{1,61}[a-z0-9.]$
+    ConstraintDescription: must adhere to the S3 bucket naming rules - https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: 'Metric Stream Configuration'
+        Parameters:
+          - NewRelicLicenseKey
+          - NewRelicDatacenter
+          - CloudWatchMetricStreamName
+          - FirehoseStreamName
+          - S3BackupBucketName
+    ParameterLabels:
+      CloudWatchMetricStreamName:
+        default: 'CloudWatch Metric Stream name'
+      FirehoseStreamName:
+        default: 'Kinesis Data Firehose name'
+      NewRelicDatacenter:
+        default: 'New Relic Datacenter'
+      NewRelicLicenseKey:
+        default: 'New Relic Ingest License Key'
+      S3BackupBucketName:
+        default: 'Firehose S3 backup bucket name'
+Resources:
+  S3FirehoseEventsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join ['-', [!Ref S3BackupBucketName, !Select [0, !Split ['-', !Select [2, !Split ['/', !Ref 'AWS::StackId' ]]]]]]
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+  FirehoseStreamToNewRelic:
+    Type: AWS::KinesisFirehose::DeliveryStream
+    Properties:
+      DeliveryStreamName: !Ref FirehoseStreamName
+      DeliveryStreamType: DirectPut
+      HttpEndpointDestinationConfiguration:
+        RequestConfiguration:
+          ContentEncoding: GZIP
+        EndpointConfiguration:
+          Name: New Relic
+          Url: !FindInMap [DatacenterMap, NewRelicDatacenter, !Ref NewRelicDatacenter]
+          AccessKey: !Ref NewRelicLicenseKey
+        BufferingHints:
+          IntervalInSeconds: 60
+          SizeInMBs: 1
+        RetryOptions:
+          DurationInSeconds: 60
+        S3Configuration:
+          CompressionFormat: GZIP
+          BucketARN: !GetAtt S3FirehoseEventsBucket.Arn
+          RoleARN: !GetAtt FirehoseRole.Arn
+        RoleARN: !GetAtt FirehoseRole.Arn
+  MetricStreamRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - streams.metrics.cloudwatch.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                'sts:ExternalId': !Ref AWS::AccountId
+      Path: /service-role/
+      Policies:
+        - PolicyName: MetricStreams-FirehosePutRecords
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'firehose:PutRecord'
+                  - 'firehose:PutRecordBatch'
+                Resource: !GetAtt FirehoseStreamToNewRelic.Arn
+      Description: Role to allow a metric stream put metrics into a firehose
+      RoleName: !Join ['-', ['MetricsStreamRole', !Select [0, !Split ['-', !Select [2, !Split ['/', !Ref 'AWS::StackId' ]]]]]]
+  FirehoseRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - firehose.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /service-role/
+      Policies:
+        - PolicyName: Firehose-S3Access
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 's3:AbortMultipartUpload'
+                  - 's3:GetBucketLocation'
+                  - 's3:GetObject'
+                  - 's3:ListBucket'
+                  - 's3:ListBucketMultipartUploads'
+                  - 's3:PutObject'
+                Resource:
+                  - !GetAtt S3FirehoseEventsBucket.Arn
+                  - !Join ['', [!GetAtt S3FirehoseEventsBucket.Arn, '/*']]
+      Description: Role to allow firehose stream put events into S3 backup bucket
+      RoleName: !Join ['-', ['FirehoseRole', !Select [0, !Split ['-', !Select [2, !Split ['/', !Ref 'AWS::StackId' ]]]]]]
+  CloudWatchMetricStream:
+    Type: AWS::CloudWatch::MetricStream
+    Properties:
+      Name: !Ref CloudWatchMetricStreamName
+      FirehoseArn: !GetAtt FirehoseStreamToNewRelic.Arn
+      RoleArn: !GetAtt MetricStreamRole.Arn
+      OutputFormat: 'opentelemetry0.7'
