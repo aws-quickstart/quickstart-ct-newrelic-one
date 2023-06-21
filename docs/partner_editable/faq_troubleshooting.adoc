@@ -47,3 +47,7 @@ New Relic offers several https://developer.newrelic.com/try-our-apis/[APIs^] for
 *Q.* I included a list of AWS accounts during the deployment, but none of the accounts show up in New Relic's UI.
 
 *A.* Ensure that your list includes only AWS account IDs that are managed by AWS Control Tower and that the account IDs are separated by commas. Also ensure that you deployed the stack in the same Region as your AWS Control Tower management account and that the New Relic NerdGraph user API key is correct. Lastly, inspect the Amazon CloudWatch logs for errors regarding the AWS Lambda function `NewRelicOnboardingFunction`.
+
+*Q.* How are metrics delivered to the New Relic platform?
+
+*A.* The deployment creates an IAM role in your AWS account that grants New Relic read access to all resources. CloudWatch metrics are delivered to Kinesis Data Firehose and then sent to a specified New Relic endpoint.

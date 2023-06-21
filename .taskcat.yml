@@ -12,4 +12,4 @@ tests:
       StackSetUrl: 'https://newrelic-aws-quickstart.s3.amazonaws.com/control-tower/templates/newrelic-stack-set.yml'
     regions:
       - us-west-2
-    template: control-tower-customization.template.yml
+    template: templates/control-tower-customization.template.yml
