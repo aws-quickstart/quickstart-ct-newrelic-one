@@ -1,0 +1,156 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: 'Installs NewRelic Infrastructure Agent in EC2 instances when template is launched or instance goes in running state. CRON job updates Infra Agent in all instances once every month. Failed installation logs are also sent to NewRelic.'
+Parameters:
+  NewRelicInfrastructureAgent:
+    Type: String
+    Description: "New Relic's infrastructure monitoring agent is a lightweight executable file that collects data about your hosts. It also forwards data from our on-host integrations to New Relic, as well as log data for log analytics."
+    Default: "New-Relic-infrastructure-monitoring-agent"
+  InstallationType:
+    Description: 'Specify the type of installation. Uninstall and resinstall -  The application is taken offline until the reinstallation process completes. In-place update -  The application is available while new or updated files are added to the installation.'
+    Type: String
+    Default: 'Uninstall and reinstall'
+    AllowedValues:
+      - 'Uninstall and reinstall'
+      - 'In-place update'
+  Action:
+    Description: 'Specify whether or not to install or uninstall the package.'
+    Type: String
+    Default: 'Install'
+    AllowedValues:
+      - 'Install'
+      - 'Uninstall'
+  NewRelicLicenseKey:
+    Type: String
+    NoEcho: true
+    Description: The license key associated with the account you wish to export metrics to
+    AllowedPattern: '^[A-Za-z0-9]{40}$'
+  AdditionalParametersLicenseKey:
+    NoEcho: true
+    AllowedPattern: '\{"SSM_NR_LICENSE_KEY": "[A-Za-z0-9]{40}"\}'
+    Description: 'NewRelicLicenseKey in this format - {"SSM_NR_LICENSE_KEY": "<your_license_key>"}'
+    Type: String
+  NewRelicLogsEndpoint:
+    Type: String
+    Description: 'New Relic Logs endpoint URL. Use default unless your New Relic account uses an EU data center. See NR_LOGGING_ENDPOINT in https://docs.newrelic.com/docs/logs/forward-logs/aws-lambda-sending-cloudwatch-logs/ for details.'
+    Default: 'https://log-api.newrelic.com/log/v1'
+    AllowedValues:
+      - 'https://log-api.newrelic.com/log/v1'
+      - 'https://log-api.eu.newrelic.com/log/v1'
+Resources:
+
+  CTNewRelicInstallInfraAgentInstaller:
+    Description: Installs latest version NewRelic Infrastructure agent in EC2 instances once every month.
+    Type: 'AWS::SSM::Association'
+    Properties:
+      AssociationName: CT-NewRelic-Infra-Agent-Installer
+      Name: AWS-ConfigureAWSPackage
+      ScheduleExpression: "rate(30 days)"
+      Targets:
+        - Key: "tag:Supervisor"
+          Values:
+            - "new-relic"
+      Parameters:
+        action: 
+          - !Ref Action
+        installationType: 
+          - !Ref InstallationType
+        name: 
+          - !Ref NewRelicInfrastructureAgent
+        additionalArguments: 
+          - !Ref AdditionalParametersLicenseKey
+
+  NewRelicApiDestination:
+    DependsOn: NewRelicConnection
+    Type: AWS::Events::ApiDestination
+    Properties:
+      Name: CT-NewRelic-Logs-Endpoint
+      HttpMethod: POST
+      InvocationEndpoint: !Ref NewRelicLogsEndpoint
+      ConnectionArn: !GetAtt NewRelicConnection.Arn
+
+  NewRelicConnection:
+    Type: AWS::Events::Connection
+    Properties:
+      Name: CT-NewRelic-Endpoint-Connection
+      AuthorizationType: API_KEY
+      AuthParameters:
+        ApiKeyAuthParameters:
+          ApiKeyName: Api-Key
+          ApiKeyValue: !Ref NewRelicLicenseKey
+        InvocationHttpParameters: 
+          HeaderParameters: 
+            - Key: Api-Key
+              Value: !Ref NewRelicLicenseKey
+        
+  EventBridgeApiDestinationPolicy:
+    DependsOn: InvokeApiDestinationEventBridgeRole
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: CT-NewRelic-EventBridgeApiDestinationPolicy
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - "events:InvokeApiDestination"
+            Resource:
+              - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:api-destination/CT-Newrelic-Logs-Endpoint/*'
+      Roles:
+        - !Ref InvokeApiDestinationEventBridgeRole
+        
+  InvokeApiDestinationEventBridgeRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: CT-NewRelic-EventBridge-Invoke-Api-Destination
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonEventBridgeFullAccess
+    
+  SendLogsToNREndpoint:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: CT-NewRelic-Failed-EC2-Infra-Agent-Installations-Logs-Rule
+      EventPattern:
+        source:
+          - "aws.ssm"
+        detail-type:
+          - "EC2 Command Invocation Status-change Notification"
+        detail:
+          status:
+            - "Failed"
+      Targets:
+        - Arn: !GetAtt NewRelicApiDestination.Arn
+          Id: "CT-Newrelic-Logs-Endpoint"
+          RoleArn: !GetAtt InvokeApiDestinationEventBridgeRole.Arn
+          
+  InstallNewRelicAgentRule:
+    DependsOn: CTNewRelicInstallInfraAgentInstaller
+    Type: AWS::Events::Rule
+    Properties:
+      Name: CT-NewRelic-Install-Agent-Rule
+      EventPattern:
+        source:
+          - "aws.ec2"
+        detail-type:
+          - "EC2 Instance State-change Notification"
+        detail:
+          state:
+            - "running"
+      Targets:
+        - Arn: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:document/AWS-ConfigureAWSPackage"
+          Id: AWS-ConfigureAWSPackage
+          RoleArn: !GetAtt InvokeApiDestinationEventBridgeRole.Arn
+          RunCommandParameters:
+            RunCommandTargets: 
+              - Key: "tag:Supervisor"
+                Values: 
+                  - "new-relic"
+          InputTransformer:
+            InputTemplate: !Sub '{"action": "${Action}", "installationType": "${InstallationType}", "additionalArguments": ${AdditionalParametersLicenseKey}, "name": "${NewRelicInfrastructureAgent}" }'
+
