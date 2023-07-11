@@ -1,6 +1,14 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Installs NewRelic Infrastructure Agent in EC2 instances when template is launched or instance goes in running state. CRON job updates Infra Agent in all instances once every month. Failed installation logs are also sent to NewRelic.'
+Description: 'Installs NewRelic Infrastructure Agent in EC2 instances when template is launched or instance goes in running state. CRON job updates Infra Agent in all instances once every month. Installation logs are also sent to NewRelic.'
 Parameters:
+  TargetEC2TagKey:
+    Type: String
+    Default: '*'
+    Description: Tag Key associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+  TargetEC2TagValue:
+      Type: String
+      Default: '*'
+      Description: Tag Value associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
   NewRelicInfrastructureAgent:
     Type: String
     Description: "New Relic's infrastructure monitoring agent is a lightweight executable file that collects data about your hosts. It also forwards data from our on-host integrations to New Relic, as well as log data for log analytics."
@@ -36,19 +44,53 @@ Parameters:
     AllowedValues:
       - 'https://log-api.newrelic.com/log/v1'
       - 'https://log-api.eu.newrelic.com/log/v1'
-Resources:
+  NewRelicInfraAgentInstallerName:
+    Type: String
+    Default: CT-NewRelic-Infra-Agent-Installer
+    Description: Name of SSM Association that installs latest version of NewRelic Infrastructure agent in EC2 instances once every month.
 
-  CTNewRelicInstallInfraAgentInstaller:
-    Description: Installs latest version NewRelic Infrastructure agent in EC2 instances once every month.
+Conditions:
+  TargetTaggedInstances: !And
+    - !Not [!Equals [!Ref TargetEC2TagKey, "*"]]
+    - !Not [!Equals [!Ref TargetEC2TagValue, "*"]]
+  TargetAllInstances: !Or
+    - !Equals [!Ref TargetEC2TagKey, "*"]
+    - !Equals [!Ref TargetEC2TagValue, "*"]
+Resources:
+  CTNewRelicInfraAgentInstallerForTaggedInstances:
+    Condition: TargetTaggedInstances
+    Description: Installs latest version NewRelic Infrastructure agent in tagged EC2 instances once every month.
     Type: 'AWS::SSM::Association'
     Properties:
-      AssociationName: CT-NewRelic-Infra-Agent-Installer
+      AssociationName: !Ref NewRelicInfraAgentInstallerName
       Name: AWS-ConfigureAWSPackage
       ScheduleExpression: "rate(30 days)"
       Targets:
-        - Key: "tag:Supervisor"
+        - Key: !Sub "tag:${TargetEC2TagKey}"
           Values:
-            - "new-relic"
+            - !Ref TargetEC2TagValue
+      Parameters:
+        action:
+          - !Ref Action
+        installationType:
+          - !Ref InstallationType
+        name:
+          - !Ref NewRelicInfrastructureAgent
+        additionalArguments:
+          - !Ref AdditionalParametersLicenseKey
+
+  CTNewRelicInfraAgentInstallerForAllInstances:
+    Condition: TargetAllInstances
+    Description: Installs latest version NewRelic Infrastructure agent in all EC2 instances once every month.
+    Type: 'AWS::SSM::Association'
+    Properties:
+      AssociationName: !Ref NewRelicInfraAgentInstallerName
+      Name: AWS-ConfigureAWSPackage
+      ScheduleExpression: "rate(30 days)"
+      Targets:
+        - Key: "InstanceIds"
+          Values:
+            - "*"
       Parameters:
         action: 
           - !Ref Action
@@ -115,7 +157,7 @@ Resources:
   SendLogsToNREndpoint:
     Type: AWS::Events::Rule
     Properties:
-      Name: CT-NewRelic-Failed-EC2-Infra-Agent-Installations-Logs-Rule
+      Name: CT-NewRelic-EC2-Infra-Agent-Installations-Logs-Rule
       EventPattern:
         source:
           - "aws.ssm"
@@ -124,16 +166,47 @@ Resources:
         detail:
           status:
             - "Failed"
+            - "Success"
       Targets:
         - Arn: !GetAtt NewRelicApiDestination.Arn
           Id: "CT-Newrelic-Logs-Endpoint"
           RoleArn: !GetAtt InvokeApiDestinationEventBridgeRole.Arn
+          InputTransformer:
+            InputPathsMap:
+              account: "$.account"
+              command-id: "$.detail.command-id"
+              detail-type: "$.detail-type"
+              document-name: "$.detail.document-name"
+              id: "$.id"
+              instance-id: "$.detail.instance-id"
+              region: "$.region"
+              requested-date-time: "$.detail.requested-date-time"
+              resources: "$.resources"
+              source: "$.source"
+              status: "$.detail.status"
+              time: "$.time"
+            InputTemplate: >
+              {	
+                "id": <id>,	
+                "detail-type": <detail-type>,	
+                "source": <source>,	
+                "account": <account>,	
+                "time": <time>,	
+                "region": <region>,	
+                "resources": <resources>,	
+                "command-id": <command-id>,	
+                "document-name": <document-name>,	
+                "instance-id": <instance-id>,	
+                "InstallationStatus": <status>,	
+                "PackageName": "New-Relic-infrastructure-monitoring-agent"	
+              }
           
-  InstallNewRelicAgentRule:
-    DependsOn: CTNewRelicInstallInfraAgentInstaller
+  InstallNewRelicAgentInAllInstancesRule:
+    Condition: TargetAllInstances
     Type: AWS::Events::Rule
     Properties:
-      Name: CT-NewRelic-Install-Agent-Rule
+      Description: Installs latest version NewRelic Infrastructure agent in all EC2 instances whenever an instance goes in running state.
+      Name: CT-NewRelic-Install-Agent-In-All-Instances-Rule
       EventPattern:
         source:
           - "aws.ec2"
@@ -147,10 +220,36 @@ Resources:
           Id: AWS-ConfigureAWSPackage
           RoleArn: !GetAtt InvokeApiDestinationEventBridgeRole.Arn
           RunCommandParameters:
-            RunCommandTargets: 
-              - Key: "tag:Supervisor"
-                Values: 
-                  - "new-relic"
+            RunCommandTargets:
+              - Key: "InstanceIds"
+                Values:
+                  - "*"
+          InputTransformer:
+            InputTemplate: !Sub '{"action": "${Action}", "installationType": "${InstallationType}", "additionalArguments": ${AdditionalParametersLicenseKey}, "name": "${NewRelicInfrastructureAgent}" }'
+
+  InstallNewRelicAgentInTaggedInstancesRule:
+    Condition: TargetTaggedInstances
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Installs latest version NewRelic Infrastructure agent in tagged EC2 instances whenever an instance goes in running state.
+      Name: CT-NewRelic-Install-Agent-In-Tagged-Instances-Rule
+      EventPattern:
+        source:
+          - "aws.ec2"
+        detail-type:
+          - "EC2 Instance State-change Notification"
+        detail:
+          state:
+            - "running"
+      Targets:
+        - Arn: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:document/AWS-ConfigureAWSPackage"
+          Id: AWS-ConfigureAWSPackage
+          RoleArn: !GetAtt InvokeApiDestinationEventBridgeRole.Arn
+          RunCommandParameters:
+            RunCommandTargets:
+              - Key: !Sub "tag:${TargetEC2TagKey}"
+                Values:
+                  - !Ref TargetEC2TagValue
           InputTransformer:
             InputTemplate: !Sub '{"action": "${Action}", "installationType": "${InstallationType}", "additionalArguments": ${AdditionalParametersLicenseKey}, "name": "${NewRelicInfrastructureAgent}" }'
 

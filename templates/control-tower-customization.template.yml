@@ -21,6 +21,9 @@ Metadata:
           - AdditionalParametersLicenseKey
           - NewRelicLogsEndpoint
           - InstallNewrelicInfrastructureAgentInEc2InstancesStackURL
+          - NewRelicInfraAgentInstallerName
+          - TargetEC2TagKey
+          - TargetEC2TagValue
       - Label:
           default: Delivery Stream configuration
         Parameters:
@@ -45,6 +48,12 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
     ParameterLabels:
+      TargetEC2TagKey:
+        default: Tag Key associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+      TargetEC2TagValue:
+        default: Tag Value associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+      NewRelicInfraAgentInstallerName:
+        default: SSM Association that installs latest version of NewRelic Infrastructure agent in EC2 instances once every month.
       NewRelicLicenseKey:
         default: >-
           The license key associated with the account you wish to export metrics
@@ -92,6 +101,18 @@ Metadata:
       InstallNewrelicInfrastructureAgentInEc2InstancesStackURL:
         default: S3 Url of ec2 quickstart template
 Parameters:
+  TargetEC2TagKey:
+    Type: String
+    Default: '*'
+    Description: Tag Key associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+  TargetEC2TagValue:
+    Type: String
+    Default: '*'
+    Description: Tag Value associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+  NewRelicInfraAgentInstallerName:
+    Type: String
+    Default: CT-NewRelic-Infra-Agent-Installer
+    Description: Name of SSM Association that installs latest version of NewRelic Infrastructure agent in EC2 instances once every month.
   InstallationType:
     Description: 'Specify the type of installation for new relic infrastructure package. Uninstall and resinstall -  The application is taken offline until the reinstallation process completes. In-place update -  The application is available while new or updated files are added to the installation.'
     Type: String
@@ -333,6 +354,8 @@ Resources:
       Timeout: 120
       Environment:
         Variables:
+          TargetEC2TagKey: !Ref TargetEC2TagKey
+          TargetEC2TagValue: !Ref TargetEC2TagValue
           stackSetName: !Ref StackSetName
           newRelicAccId: !Ref NewRelicAccountNumber
           seedAccounts: !Ref LaunchAccountList
@@ -351,6 +374,7 @@ Resources:
           Action: !Ref Action
           AdditionalParametersLicenseKey: !Ref AdditionalParametersLicenseKey
           NewRelicLogsEndpoint: !Ref NewRelicLogsEndpoint
+          NewRelicInfraAgentInstallerName: !Ref NewRelicInfraAgentInstallerName
           InstallNewrelicInfrastructureAgentInEc2InstancesStackURL: !Ref InstallNewrelicInfrastructureAgentInEc2InstancesStackURL
       Role: !GetAtt NewRelicOnboardingFunctionRole.Arn
 

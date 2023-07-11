@@ -109,6 +109,24 @@ def create(event, context):
                     'ParameterValue': os.environ['InstallNewrelicInfrastructureAgentInEc2InstancesStackURL'],
                     'UsePreviousValue': False,
                     'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'NewRelicInfraAgentInstallerName',
+                    'ParameterValue': os.environ['NewRelicInfraAgentInstallerName'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'TargetEC2TagKey',
+                    'ParameterValue': os.environ['TargetEC2TagKey'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'TargetEC2TagValue',
+                    'ParameterValue': os.environ['TargetEC2TagValue'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
                 }
             ],
             Capabilities=[
