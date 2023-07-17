@@ -58,11 +58,12 @@ Conditions:
     - !Equals [!Ref TargetEC2TagValue, "*"]
 Resources:
   CTNewRelicInfraAgentInstallerForTaggedInstances:
+    DependsOn: SendLogsToNREndpoint
     Condition: TargetTaggedInstances
     Description: Installs latest version NewRelic Infrastructure agent in tagged EC2 instances once every month.
     Type: 'AWS::SSM::Association'
     Properties:
-      AssociationName: !Ref NewRelicInfraAgentInstallerName
+      AssociationName: !Sub "${NewRelicInfraAgentInstallerName}"
       Name: AWS-ConfigureAWSPackage
       ScheduleExpression: "rate(30 days)"
       Targets:
@@ -80,11 +81,12 @@ Resources:
           - !Ref AdditionalParametersLicenseKey
 
   CTNewRelicInfraAgentInstallerForAllInstances:
+    DependsOn: SendLogsToNREndpoint
     Condition: TargetAllInstances
     Description: Installs latest version NewRelic Infrastructure agent in all EC2 instances once every month.
     Type: 'AWS::SSM::Association'
     Properties:
-      AssociationName: !Ref NewRelicInfraAgentInstallerName
+      AssociationName: !Sub "${NewRelicInfraAgentInstallerName}"
       Name: AWS-ConfigureAWSPackage
       ScheduleExpression: "rate(30 days)"
       Targets:
@@ -200,56 +202,3 @@ Resources:
                 "InstallationStatus": <status>,	
                 "PackageName": "New-Relic-infrastructure-monitoring-agent"	
               }
-          
-  InstallNewRelicAgentInAllInstancesRule:
-    Condition: TargetAllInstances
-    Type: AWS::Events::Rule
-    Properties:
-      Description: Installs latest version NewRelic Infrastructure agent in all EC2 instances whenever an instance goes in running state.
-      Name: CT-NewRelic-Install-Agent-In-All-Instances-Rule
-      EventPattern:
-        source:
-          - "aws.ec2"
-        detail-type:
-          - "EC2 Instance State-change Notification"
-        detail:
-          state:
-            - "running"
-      Targets:
-        - Arn: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:document/AWS-ConfigureAWSPackage"
-          Id: AWS-ConfigureAWSPackage
-          RoleArn: !GetAtt InvokeApiDestinationEventBridgeRole.Arn
-          RunCommandParameters:
-            RunCommandTargets:
-              - Key: "InstanceIds"
-                Values:
-                  - "*"
-          InputTransformer:
-            InputTemplate: !Sub '{"action": "${Action}", "installationType": "${InstallationType}", "additionalArguments": ${AdditionalParametersLicenseKey}, "name": "${NewRelicInfrastructureAgent}" }'
-
-  InstallNewRelicAgentInTaggedInstancesRule:
-    Condition: TargetTaggedInstances
-    Type: AWS::Events::Rule
-    Properties:
-      Description: Installs latest version NewRelic Infrastructure agent in tagged EC2 instances whenever an instance goes in running state.
-      Name: CT-NewRelic-Install-Agent-In-Tagged-Instances-Rule
-      EventPattern:
-        source:
-          - "aws.ec2"
-        detail-type:
-          - "EC2 Instance State-change Notification"
-        detail:
-          state:
-            - "running"
-      Targets:
-        - Arn: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:document/AWS-ConfigureAWSPackage"
-          Id: AWS-ConfigureAWSPackage
-          RoleArn: !GetAtt InvokeApiDestinationEventBridgeRole.Arn
-          RunCommandParameters:
-            RunCommandTargets:
-              - Key: !Sub "tag:${TargetEC2TagKey}"
-                Values:
-                  - !Ref TargetEC2TagValue
-          InputTransformer:
-            InputTemplate: !Sub '{"action": "${Action}", "installationType": "${InstallationType}", "additionalArguments": ${AdditionalParametersLicenseKey}, "name": "${NewRelicInfrastructureAgent}" }'
-
