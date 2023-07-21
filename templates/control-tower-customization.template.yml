@@ -14,6 +14,17 @@ Metadata:
           - NewRelicLicenseKey
           - NewRelicDatacenter
       - Label:
+          default: "Ec2 Quickstart solution"
+        Parameters:
+          - InstallationType
+          - Action
+          - AdditionalParametersLicenseKey
+          - NewRelicLogsEndpoint
+          - InstallNewrelicInfrastructureAgentInEc2InstancesStackURL
+          - NewRelicInfraAgentInstallerName
+          - TargetEC2TagKey
+          - TargetEC2TagValue
+      - Label:
           default: Delivery Stream configuration
         Parameters:
           - CloudWatchMetricsStreamingTemplateURL
@@ -37,6 +48,12 @@ Metadata:
           - QSS3BucketName
           - QSS3KeyPrefix
     ParameterLabels:
+      TargetEC2TagKey:
+        default: Tag Key associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+      TargetEC2TagValue:
+        default: Tag Value associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+      NewRelicInfraAgentInstallerName:
+        default: SSM Association that installs latest version of NewRelic Infrastructure agent in EC2 instances once every month.
       NewRelicLicenseKey:
         default: >-
           The license key associated with the account you wish to export metrics
@@ -73,7 +90,59 @@ Metadata:
         default: Quick Start S3 bucket name.
       QSS3KeyPrefix:
         default: Quick Start S3 key prefix.
+      InstallationType:
+        default: Type of installation for new relic infrastructure package
+      Action:
+        default: Specify whether or not to install or uninstall the new relic infrastructure package.
+      AdditionalParametersLicenseKey:
+        default: 'NewRelicLicenseKey in this format - {"SSM_NR_LICENSE_KEY": "<your_license_key>"}'
+      NewRelicLogsEndpoint:
+        default: New Relic Logs endpoint URL
+      InstallNewrelicInfrastructureAgentInEc2InstancesStackURL:
+        default: S3 Url of ec2 quickstart template
 Parameters:
+  TargetEC2TagKey:
+    Type: String
+    Default: '*'
+    Description: Tag Key associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+  TargetEC2TagValue:
+    Type: String
+    Default: '*'
+    Description: Tag Value associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+  NewRelicInfraAgentInstallerName:
+    Type: String
+    Default: CT-NewRelic-Infra-Agent-Installer
+    Description: Name of SSM Association that installs latest version of NewRelic Infrastructure agent in EC2 instances once every month.
+  InstallationType:
+    Description: 'Specify the type of installation for new relic infrastructure package. Uninstall and resinstall -  The application is taken offline until the reinstallation process completes. In-place update -  The application is available while new or updated files are added to the installation.'
+    Type: String
+    Default: 'Uninstall and reinstall'
+    AllowedValues:
+      - 'Uninstall and reinstall'
+      - 'In-place update'
+  Action:
+    Description: 'Specify whether or not to install or uninstall the new relic infrastructure package.'
+    Type: String
+    Default: 'Install'
+    AllowedValues:
+      - 'Install'
+      - 'Uninstall'
+  AdditionalParametersLicenseKey:
+    NoEcho: true
+    Description: 'NewRelicLicenseKey in this format - {"SSM_NR_LICENSE_KEY": "<your_license_key>"}'
+    Type: String
+    AllowedPattern: '\{"SSM_NR_LICENSE_KEY": "[A-Za-z0-9]{40}"\}'
+  NewRelicLogsEndpoint:
+    Type: String
+    Description: 'New Relic Logs endpoint URL. Use default unless your New Relic account uses an EU data center. See NR_LOGGING_ENDPOINT in https://docs.newrelic.com/docs/logs/forward-logs/aws-lambda-sending-cloudwatch-logs/ for details.'
+    Default: 'https://log-api.newrelic.com/log/v1'
+    AllowedValues:
+      - 'https://log-api.newrelic.com/log/v1'
+      - 'https://log-api.eu.newrelic.com/log/v1'
+  InstallNewrelicInfrastructureAgentInEc2InstancesStackURL:
+    Type: String
+    Default: https://aws-quickstart.s3.amazonaws.com/quickstart-ct-newrelic-one/templates/EC2_Quickstart.yml
+    Description: "S3 Url of ec2 quickstart template - Installs and manages NewRelic Infrastructure Agent in ec2 instances"
   NewRelicLicenseKey:
     Type: String
     NoEcho: true
@@ -285,6 +354,8 @@ Resources:
       Timeout: 120
       Environment:
         Variables:
+          TargetEC2TagKey: !Ref TargetEC2TagKey
+          TargetEC2TagValue: !Ref TargetEC2TagValue
           stackSetName: !Ref StackSetName
           newRelicAccId: !Ref NewRelicAccountNumber
           seedAccounts: !Ref LaunchAccountList
@@ -299,6 +370,12 @@ Resources:
           CloudWatchMetricsStreamingTemplateURL: !Ref CloudWatchMetricsStreamingTemplateURL
           NewRelicDatacenter: !Ref NewRelicDatacenter
           NewRelicLicenseKey: !Ref NewRelicLicenseKey
+          InstallationType: !Ref InstallationType
+          Action: !Ref Action
+          AdditionalParametersLicenseKey: !Ref AdditionalParametersLicenseKey
+          NewRelicLogsEndpoint: !Ref NewRelicLogsEndpoint
+          NewRelicInfraAgentInstallerName: !Ref NewRelicInfraAgentInstallerName
+          InstallNewrelicInfrastructureAgentInEc2InstancesStackURL: !Ref InstallNewrelicInfrastructureAgentInEc2InstancesStackURL
       Role: !GetAtt NewRelicOnboardingFunctionRole.Arn
 
   NewRelicOnboardingFunctionRole:
