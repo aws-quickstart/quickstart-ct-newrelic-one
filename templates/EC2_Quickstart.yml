@@ -154,7 +154,7 @@ Resources:
               Service: events.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - arn:${AWS::Partition}:iam::aws:policy/AmazonEventBridgeFullAccess
+        - arn:aws:iam::aws:policy/AmazonEventBridgeFullAccess
     
   SendLogsToNREndpoint:
     Type: AWS::Events::Rule
