@@ -138,7 +138,7 @@ Resources:
             Action:
               - "events:InvokeApiDestination"
             Resource:
-              - !Sub 'arn:aws:events:${AWS::Region}:${AWS::AccountId}:api-destination/CT-Newrelic-Logs-Endpoint/*'
+              - !Sub 'arn:${AWS::Partition}:events:${AWS::Region}:${AWS::AccountId}:api-destination/CT-Newrelic-Logs-Endpoint/*'
       Roles:
         - !Ref InvokeApiDestinationEventBridgeRole
         
@@ -154,7 +154,7 @@ Resources:
               Service: events.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonEventBridgeFullAccess
+        - arn:${AWS::Partition}:iam::aws:policy/AmazonEventBridgeFullAccess
     
   SendLogsToNREndpoint:
     Type: AWS::Events::Rule
