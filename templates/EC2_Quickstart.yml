@@ -62,7 +62,6 @@ Resources:
     Condition: TargetTaggedInstances
     Type: 'AWS::SSM::Association'
     Properties:
-      Description: Installs latest version NewRelic Infrastructure agent in tagged EC2 instances once every month.
       AssociationName: !Sub "${NewRelicInfraAgentInstallerName}"
       Name: AWS-ConfigureAWSPackage
       ScheduleExpression: "rate(30 days)"
@@ -85,7 +84,6 @@ Resources:
     Condition: TargetAllInstances
     Type: 'AWS::SSM::Association'
     Properties:
-      Description: Installs latest version NewRelic Infrastructure agent in all EC2 instances once every month.
       AssociationName: !Sub "${NewRelicInfraAgentInstallerName}"
       Name: AWS-ConfigureAWSPackage
       ScheduleExpression: "rate(30 days)"
