@@ -60,9 +60,9 @@ Resources:
   CTNewRelicInfraAgentInstallerForTaggedInstances:
     DependsOn: SendLogsToNREndpoint
     Condition: TargetTaggedInstances
-    Description: Installs latest version NewRelic Infrastructure agent in tagged EC2 instances once every month.
     Type: 'AWS::SSM::Association'
     Properties:
+      Description: Installs latest version NewRelic Infrastructure agent in tagged EC2 instances once every month.
       AssociationName: !Sub "${NewRelicInfraAgentInstallerName}"
       Name: AWS-ConfigureAWSPackage
       ScheduleExpression: "rate(30 days)"
@@ -83,9 +83,9 @@ Resources:
   CTNewRelicInfraAgentInstallerForAllInstances:
     DependsOn: SendLogsToNREndpoint
     Condition: TargetAllInstances
-    Description: Installs latest version NewRelic Infrastructure agent in all EC2 instances once every month.
     Type: 'AWS::SSM::Association'
     Properties:
+      Description: Installs latest version NewRelic Infrastructure agent in all EC2 instances once every month.
       AssociationName: !Sub "${NewRelicInfraAgentInstallerName}"
       Name: AWS-ConfigureAWSPackage
       ScheduleExpression: "rate(30 days)"
@@ -154,7 +154,7 @@ Resources:
               Service: events.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonEventBridgeFullAccess
+        - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEventBridgeFullAccess'
     
   SendLogsToNREndpoint:
     Type: AWS::Events::Rule
