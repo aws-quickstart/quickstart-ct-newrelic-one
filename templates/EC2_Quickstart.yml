@@ -128,7 +128,7 @@ Resources:
     DependsOn: InvokeApiDestinationEventBridgeRole
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: CT-NewRelic-EventBridgeApiDestinationPolicy
+      PolicyName: !Sub 'CT-NewRelic-EventBridgeApiDestinationPolicy-${AWS::Region}'
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -143,7 +143,7 @@ Resources:
   InvokeApiDestinationEventBridgeRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: CT-NewRelic-EventBridge-Invoke-Api-Destination
+      RoleName: !Sub 'CT-NewRelic-EventBridge-Invoke-Api-Destination-${AWS::Region}'
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
