@@ -46,7 +46,7 @@ Parameters:
       - 'https://log-api.eu.newrelic.com/log/v1'
   NewRelicInfraAgentInstallerName:
     Type: String
-    Default: CT-NewRelic-Infra-Agent-Installer
+    Default: NewRelic-Infra-Agent-Installer
     Description: Name of SSM Association that installs latest version of NewRelic Infrastructure agent in EC2 instances once every month.
 
 Conditions:
@@ -57,7 +57,7 @@ Conditions:
     - !Equals [!Ref TargetEC2TagKey, "*"]
     - !Equals [!Ref TargetEC2TagValue, "*"]
 Resources:
-  CTNewRelicInfraAgentInstallerForTaggedInstances:
+  NewRelicInfraAgentInstallerForTaggedInstances:
     DependsOn: SendLogsToNREndpoint
     Condition: TargetTaggedInstances
     Type: 'AWS::SSM::Association'
@@ -79,7 +79,7 @@ Resources:
         additionalArguments:
           - !Ref AdditionalParametersLicenseKey
 
-  CTNewRelicInfraAgentInstallerForAllInstances:
+  NewRelicInfraAgentInstallerForAllInstances:
     DependsOn: SendLogsToNREndpoint
     Condition: TargetAllInstances
     Type: 'AWS::SSM::Association'
@@ -105,7 +105,7 @@ Resources:
     DependsOn: NewRelicConnection
     Type: AWS::Events::ApiDestination
     Properties:
-      Name: CT-NewRelic-Logs-Endpoint
+      Name: NewRelic-Logs-Endpoint
       HttpMethod: POST
       InvocationEndpoint: !Ref NewRelicLogsEndpoint
       ConnectionArn: !GetAtt NewRelicConnection.Arn
@@ -113,7 +113,7 @@ Resources:
   NewRelicConnection:
     Type: AWS::Events::Connection
     Properties:
-      Name: CT-NewRelic-Endpoint-Connection
+      Name: NewRelic-Endpoint-Connection
       AuthorizationType: API_KEY
       AuthParameters:
         ApiKeyAuthParameters:
@@ -128,7 +128,7 @@ Resources:
     DependsOn: InvokeApiDestinationEventBridgeRole
     Type: AWS::IAM::Policy
     Properties:
-      PolicyName: !Sub 'CT-NewRelic-EventBridgeApiDestinationPolicy-${AWS::Region}'
+      PolicyName: !Sub 'NewRelic-EventBridgeApiDestinationPolicy-${AWS::Region}'
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -143,7 +143,7 @@ Resources:
   InvokeApiDestinationEventBridgeRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: !Sub 'CT-NewRelic-EventBridge-Invoke-Api-Destination-${AWS::Region}'
+      RoleName: !Sub 'NewRelic-EventBridge-Invoke-Api-Destination-${AWS::Region}'
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -157,26 +157,55 @@ Resources:
   EventBridgeTargetDLQ: 	
     Type: AWS::SQS::Queue	
     Properties: 	
-      QueueName: "CT-NewRelic-Agent-Installation-FailedInvocations-DLQ"  
+      QueueName: "NewRelic-Agent-Installation-FailedInvocations-DLQ"  
       
   SendLogsToNREndpoint:
     DependsOn: EventBridgeTargetDLQ
     Type: AWS::Events::Rule
     Properties:
-      Name: CT-NewRelic-EC2-Infra-Agent-Installations-Logs-Rule
+      Name: NewRelic-EC2-Infra-Agent-Installations-Logs-Rule
       EventPattern:
         source:
           - "aws.ssm"
         detail-type:
-          - "EC2 State Manager Instance Association State Change"
+          - "EC2 Command Invocation Status-change Notification"
         detail:
           status:
             - "Failed"
             - "Success"
       Targets:
         - Arn: !GetAtt NewRelicApiDestination.Arn
-          Id: "CT-Newrelic-Logs-Endpoint"
+          Id: "Newrelic-Logs-Endpoint"
           RoleArn: !GetAtt InvokeApiDestinationEventBridgeRole.Arn
+          InputTransformer:
+            InputPathsMap:
+              account: "$.account"
+              command-id: "$.detail.command-id"
+              detail-type: "$.detail-type"
+              document-name: "$.detail.document-name"
+              id: "$.id"
+              instance-id: "$.detail.instance-id"
+              region: "$.region"
+              requested-date-time: "$.detail.requested-date-time"
+              resources: "$.resources"
+              source: "$.source"
+              status: "$.detail.status"
+              time: "$.time"
+            InputTemplate: >
+              {	
+                "id": <id>,	
+                "detail-type": <detail-type>,	
+                "source": <source>,	
+                "account": <account>,	
+                "time": <time>,	
+                "region": <region>,	
+                "resources": <resources>,	
+                "command-id": <command-id>,	
+                "document-name": <document-name>,	
+                "instance-id": <instance-id>,	
+                "InstallationStatus": <status>,	
+                "PackageName": "New-Relic-infrastructure-monitoring-agent"	
+              }
           DeadLetterConfig:	
             Arn: !GetAtt EventBridgeTargetDLQ.Arn
         
