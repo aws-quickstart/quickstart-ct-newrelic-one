@@ -160,6 +160,7 @@ Resources:
       QueueName: "CT-NewRelic-Agent-Installation-FailedInvocations-DLQ"  
       
   SendLogsToNREndpoint:
+    DependsOn: EventBridgeTargetDLQ
     Type: AWS::Events::Rule
     Properties:
       Name: CT-NewRelic-EC2-Infra-Agent-Installations-Logs-Rule
