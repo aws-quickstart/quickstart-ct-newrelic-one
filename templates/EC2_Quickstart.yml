@@ -153,7 +153,12 @@ Resources:
             Action: sts:AssumeRole
       ManagedPolicyArns:
         - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEventBridgeFullAccess'
-    
+        
+  EventBridgeTargetDLQ: 	
+    Type: AWS::SQS::Queue	
+    Properties: 	
+      QueueName: "CT-NewRelic-Agent-Installation-FailedInvocations-DLQ"  
+      
   SendLogsToNREndpoint:
     Type: AWS::Events::Rule
     Properties:
@@ -162,7 +167,7 @@ Resources:
         source:
           - "aws.ssm"
         detail-type:
-          - "EC2 Command Invocation Status-change Notification"
+          - "EC2 State Manager Instance Association State Change"
         detail:
           status:
             - "Failed"
@@ -171,32 +176,6 @@ Resources:
         - Arn: !GetAtt NewRelicApiDestination.Arn
           Id: "CT-Newrelic-Logs-Endpoint"
           RoleArn: !GetAtt InvokeApiDestinationEventBridgeRole.Arn
-          InputTransformer:
-            InputPathsMap:
-              account: "$.account"
-              command-id: "$.detail.command-id"
-              detail-type: "$.detail-type"
-              document-name: "$.detail.document-name"
-              id: "$.id"
-              instance-id: "$.detail.instance-id"
-              region: "$.region"
-              requested-date-time: "$.detail.requested-date-time"
-              resources: "$.resources"
-              source: "$.source"
-              status: "$.detail.status"
-              time: "$.time"
-            InputTemplate: >
-              {	
-                "id": <id>,	
-                "detail-type": <detail-type>,	
-                "source": <source>,	
-                "account": <account>,	
-                "time": <time>,	
-                "region": <region>,	
-                "resources": <resources>,	
-                "command-id": <command-id>,	
-                "document-name": <document-name>,	
-                "instance-id": <instance-id>,	
-                "InstallationStatus": <status>,	
-                "PackageName": "New-Relic-infrastructure-monitoring-agent"	
-              }
+          DeadLetterConfig:	
+            Arn: !GetAtt EventBridgeTargetDLQ.Arn
+        
