@@ -154,9 +154,9 @@ Resources:
       ManagedPolicyArns:
         - !Sub 'arn:${AWS::Partition}:iam::aws:policy/AmazonEventBridgeFullAccess'
         
-  EventBridgeTargetDLQ: 	
+  EventBridgeTargetDLQ:
     Type: AWS::SQS::Queue	
-    Properties: 	
+    Properties:
       QueueName: "NewRelic-Agent-Installation-FailedInvocations-DLQ"  
       
   SendLogsToNREndpoint:
@@ -206,6 +206,6 @@ Resources:
                 "InstallationStatus": <status>,	
                 "PackageName": "New-Relic-infrastructure-monitoring-agent"	
               }
-          DeadLetterConfig:	
+          DeadLetterConfig:
             Arn: !GetAtt EventBridgeTargetDLQ.Arn
         
