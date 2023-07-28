@@ -13,6 +13,15 @@ This Quick Start can be deployed in Regions that are supported by AWS Control To
 * eu-west-1
 * eu-west-2
 * eu-north-1
+* eu-west-3
+* sa-east-1
+* us-west-1
+* ap-east-1
+* ap-southeast-3
+* ap-northeast-3
+* eu-south-1
+* af-south-1
+* me-south-1
 
 To find the most recent list of Regions supported by AWS Control Tower, run the following AWS CLI command:
 
@@ -20,4 +29,6 @@ To find the most recent list of Regions supported by AWS Control Tower, run the 
 aws ssm get-parameters-by-path --path "/aws/service/global-infrastructure/services/controltower/regions" --output json --query "Parameters[].Value"
 ....
 
-For more information, see https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/[AWS Regional Services^]. 
+The Regions AWS Control supports can also be viewed here https://docs.aws.amazon.com/controltower/latest/userguide/region-how.html[AWS Control Tower Supported Regions^].
+
+For more information, see https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/[AWS Regional Services^].
