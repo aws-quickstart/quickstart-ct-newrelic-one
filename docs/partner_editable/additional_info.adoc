@@ -1,6 +1,6 @@
 == Test the deployment
 
-When you enroll a new AWS Control Tower–managed account, the deployment sets up the IAM role and Metrics Streaming Resources for {partner-product-short-name}. You can then see the new account show up in the New Relic UI.
+When you enroll a new AWS Control Tower–managed account, the deployment sets up the IAM role, Metrics Streaming Resources and New Relic Infrastructure Agent installation resources for {partner-product-short-name}. You can then see the new account show up in the New Relic UI.
 
 . https://one.newrelic.com[Log in^] to your New Relic account.
 . To view your AWS data, see https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/introduction-aws-integrations/#insights[Introduction to AWS integrations^].

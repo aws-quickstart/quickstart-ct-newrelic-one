@@ -51,3 +51,11 @@ New Relic offers several https://developer.newrelic.com/try-our-apis/[APIs^] for
 *Q.* How are metrics delivered to the New Relic platform?
 
 *A.* The deployment creates an IAM role in your AWS account that grants New Relic read access to all resources. CloudWatch metrics are delivered to Kinesis Data Firehose and then sent to a specified New Relic endpoint.
+
+*Q.* What does ec2 New Relic Infrastructure Agent do?
+
+*A.* Using the Control Tower template we are installing New Relic Infrastructure Agent in ec2 instances of child account for better observability. New Relic's infrastructure monitoring agent is a lightweight executable file that collects data about your hosts. It also forwards data from our on-host integrations to New Relic, as well as log data for log analytics. For more information see https://docs.newrelic.com/docs/infrastructure/install-infrastructure-agent/get-started/install-infrastructure-agent/[New Relic Infrastructure Agent^].
+
+*Q.* When is New Relic Infrastructure Agent installed in ec2 instances of child account and how often it's updated.
+
+*A.* A Systems Manager - State Manager Association is created in all child accounts using stack set which installs New Relic Infrastructure Agent in all existing instances once AWS Control Tower stack deployment completes. It also installs the agent in newly created instances automatically. The CRON expression present in association updates instances with latest New Relic Infrastructure Agent once monthly.
