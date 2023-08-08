@@ -79,6 +79,54 @@ def create(event, context):
                     'ParameterValue': os.environ['S3BackupBucketName'],
                     'UsePreviousValue': False,
                     'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'InstallationType',
+                    'ParameterValue': os.environ['InstallationType'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'Action',
+                    'ParameterValue': os.environ['Action'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'AdditionalParametersLicenseKey',
+                    'ParameterValue': os.environ['AdditionalParametersLicenseKey'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'NewRelicLogsEndpoint',
+                    'ParameterValue': os.environ['NewRelicLogsEndpoint'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'InstallNewrelicInfrastructureAgentInEc2InstancesStackURL',
+                    'ParameterValue': os.environ['InstallNewrelicInfrastructureAgentInEc2InstancesStackURL'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'NewRelicInfraAgentInstallerName',
+                    'ParameterValue': os.environ['NewRelicInfraAgentInstallerName'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'TargetEC2TagKey',
+                    'ParameterValue': os.environ['TargetEC2TagKey'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
+                },
+                {
+                    'ParameterKey': 'TargetEC2TagValue',
+                    'ParameterValue': os.environ['TargetEC2TagValue'],
+                    'UsePreviousValue': False,
+                    'ResolvedValue': 'string'
                 }
             ],
             Capabilities=[

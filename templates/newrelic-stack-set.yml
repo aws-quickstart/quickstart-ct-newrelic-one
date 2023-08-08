@@ -1,6 +1,48 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Integrates New Relic with AWS accounts that use AWS Control Tower. This deployment launches as a stack set in your AWS Control Tower landing zone.(qs-1rsulpe1p)
 Parameters:
+  TargetEC2TagKey:
+    Type: String
+    Default: '*'
+    Description: Tag Key associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+  TargetEC2TagValue:
+    Type: String
+    Default: '*'
+    Description: Tag Value associated with EC2 instance where NewRelic infrastructure agent needs to be installed. Keep it * for selecting all instances.
+  NewRelicInfraAgentInstallerName:
+    Type: String
+    Default: CT-NewRelic-Infra-Agent-Installer
+    Description: Name of SSM Association that installs latest version of NewRelic Infrastructure agent in EC2 instances once every month.
+  InstallationType:
+    Description: 'Specify the type of installation for new relic infrastructure package. Uninstall and resinstall -  The application is taken offline until the reinstallation process completes. In-place update -  The application is available while new or updated files are added to the installation.'
+    Type: String
+    Default: 'Uninstall and reinstall'
+    AllowedValues:
+      - 'Uninstall and reinstall'
+      - 'In-place update'
+  Action:
+    Description: 'Specify whether or not to install or uninstall the new relic infrastructure package.'
+    Type: String
+    Default: 'Install'
+    AllowedValues:
+      - 'Install'
+      - 'Uninstall'
+  AdditionalParametersLicenseKey:
+    Description: 'NewRelicLicenseKey in this format - {"SSM_NR_LICENSE_KEY": "<your_license_key>"}'
+    Type: String
+    NoEcho: true
+    AllowedPattern: '\{"SSM_NR_LICENSE_KEY": "[A-Za-z0-9]{40}"\}'
+  NewRelicLogsEndpoint:
+    Type: String
+    Description: 'New Relic Logs endpoint URL. Use default unless your New Relic account uses an EU data center. See NR_LOGGING_ENDPOINT in https://docs.newrelic.com/docs/logs/forward-logs/aws-lambda-sending-cloudwatch-logs/ for details.'
+    Default: 'https://log-api.newrelic.com/log/v1'
+    AllowedValues:
+      - 'https://log-api.newrelic.com/log/v1'
+      - 'https://log-api.eu.newrelic.com/log/v1'
+  InstallNewrelicInfrastructureAgentInEc2InstancesStackURL:
+    Type: String
+    Default: https://aws-quickstart.s3.amazonaws.com/quickstart-ct-newrelic-one/templates/EC2_Quickstart.yml
+    Description: "S3 Url of ec2 quickstart template - Installs and manages NewRelic Infrastructure Agent in ec2 instances"
   NewRelicAccountNumber:
     Type: String
     Description: New Relic account ID
@@ -48,6 +90,20 @@ Resources:
         FirehoseStreamName: !Ref FirehoseStreamName
         S3BackupBucketName: !Ref S3BackupBucketName
       TimeoutInMinutes: 10
+  InstallNewrelicInfrastructureAgentInEc2InstancesStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref InstallNewrelicInfrastructureAgentInEc2InstancesStackURL
+      Parameters:
+        InstallationType: !Ref InstallationType
+        Action: !Ref Action
+        AdditionalParametersLicenseKey: !Ref AdditionalParametersLicenseKey
+        NewRelicLogsEndpoint: !Ref NewRelicLogsEndpoint
+        NewRelicLicenseKey: !Ref NewRelicLicenseKey
+        NewRelicInfraAgentInstallerName: !Ref NewRelicInfraAgentInstallerName
+        TargetEC2TagKey: !Ref TargetEC2TagKey
+        TargetEC2TagValue: !Ref TargetEC2TagValue
+      TimeoutInMinutes: 15
   NewRelicDefaultPolicyRole:
     Type: 'AWS::IAM::Role'
     Metadata:
