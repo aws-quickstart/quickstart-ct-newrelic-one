@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: 'Installs NewRelic Infrastructure Agent in EC2 instances when template is launched or instance goes in running state. CRON job updates Infra Agent in all instances once every month. Installation logs are also sent to NewRelic.'
+Description: 'Installs NewRelic Infrastructure Agent in EC2 instances when template is launched or instance goes in running state. CRON job updates Infra Agent in all instances once every month. Installation logs are also sent to NewRelic. (qs-1uesekrte)'
 Parameters:
   TargetEC2TagKey:
     Type: String
