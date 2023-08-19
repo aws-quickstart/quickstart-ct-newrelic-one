@@ -1,5 +1,0 @@
-This Quick Start reference deployment guide provides instructions for deploying the {partner-product-short-name} on the AWS Cloud.
-
-This Quick Start allows you to streamline the observability of your https://aws.amazon.com/controltower/[AWS Control Tower] managed https://aws.amazon.com/controltower/features/#Landing_Zone[landing zone] with New Relic using https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/introduction-aws-integrations/[New Relic AWS integrations]. Once you delpoy this Quick Start, any new enrolled accounts in your AWS Control Tower managed organizations are automatically monitored with your New Relic account, from the moment they are launched. It also lets you link existing accounts with New Relic, in case you've already set up your landing zone. You can then manage all your AWS operational data and insights from one place, with no need to hop back and forth between multiple AWS accounts or other set of observability tools. 
-
-This Quick Start is for developers, devops engineers, cloud administrators, and system integrators to fully automate observability of your AWS Control Tower landing zone with New Relic.
