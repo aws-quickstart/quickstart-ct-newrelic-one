@@ -1,0 +1,9 @@
+This guide covers the information you need to deploy the {partner-product-name} Partner Solution in the AWS Cloud.
+
+This Partner Solution allows you to streamline the observability of your https://aws.amazon.com/controltower/[AWS Control Tower] managed https://aws.amazon.com/controltower/features/#Landing_Zone[landing zone] with New Relic using https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/introduction-aws-integrations/[New Relic AWS integrations]. Once you delpoy this Partner Solution, any new enrolled accounts in your AWS Control Tower managed organizations are automatically monitored with your New Relic account, from the moment they are launched. It also lets you link existing accounts with New Relic, in case you've already set up your landing zone. You can then manage all your AWS operational data and insights from one place, with no need to hop back and forth between multiple AWS accounts or other set of observability tools. 
+
+This Partner Solution is for developers, devops engineers, cloud administrators, and system integrators to fully automate observability of your AWS Control Tower landing zone with New Relic.
+
+{partner-product-short-name} requires that you grant read permission to operational telemetry data from your AWS account. To do this, use an AWS Identity and Access Management (IAM) role that uses https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html[IAM cross-account access^].  To collect and stream your monitored telemetry data to New Relic, {partner-product-short-name} uses an Amazon CloudWatch metric stream and a Kinesis Firehose delivery stream. For more information, refer to https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/integrations-managed-policies[Integrations and managed policies^]. 
+
+If you are new to New Relic, please refer to https://newrelic.com[New Relic] to learn about it.

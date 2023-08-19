@@ -1,6 +1,0 @@
-The {partner-product-short-name} Quick Start allows you to scale the observability
-of your AWS Control Tower managed landing zones with New Relic, right from the moment accounts are enrolled. You spend no time managing New Relic integration while automatically monitoring your AWS environment from New Relic.
-
-{partner-product-short-name} requires that you grant read permission to operational telemetry data from your AWS account. To do this, use an AWS Identity and Access Management (IAM) role that uses https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html[IAM cross-account access^].  To collect and stream your monitored telemetry data to New Relic, {partner-product-short-name} uses an Amazon CloudWatch metric stream and a Kinesis Firehose delivery stream. For more information, refer to https://docs.newrelic.com/docs/integrations/amazon-integrations/get-started/integrations-managed-policies[Integrations and managed policies^]. 
-
-If you are new to New Relic, please refer to https://newrelic.com[New Relic] to learn about it.

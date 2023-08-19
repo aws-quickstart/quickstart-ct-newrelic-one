@@ -1,0 +1,7 @@
+// Edit this placeholder text as necessary to describe the deployment options.
+
+This Partner Solution provides the following deployment option:
+
+* https://fwd.aws/zJYx9?[Create AWS CloudFormation stack].
+
+WARNING: This Partner Solution enables all AWS integrations that are available in New Relic. For a list of integrations and data, see https://docs.newrelic.com/docs/infrastructure/amazon-integrations/aws-integrations-list[AWS integrations^].
