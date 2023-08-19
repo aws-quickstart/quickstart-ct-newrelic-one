@@ -4,3 +4,13 @@ For troubleshooting common Partner Solution issues, refer to the https://fwd.aws
 
 // == Resources
 // Uncomment section and add links to any external resources that are specified by the partner.
+
+== Best practices for using {partner-product-short-name} on AWS
+
+For a list of best practices for {partner-product-short-name}, see the https://docs.newrelic.com/docs/new-relic-solutions/best-practices-guides/full-stack-observability/infrastructure-monitoring-best-practices-guide/[Infrastructure monitoring best practices guide^].
+
+For more information, see https://docs.newrelic.com/docs/new-relic-solutions/best-practices-guides/[Best practices guides^].
+
+== Security
+
+To enhance your security, see New Relic's https://docs.newrelic.com/docs/accounts/accounts/saml-single-sign/saml-service-providers/[Intro to authentication (SAML SSO) for users on original user model^]. Modify the https://docs.newrelic.com/docs/agents/manage-apm-agents/configuration/high-security-mode/[high-security mode^] settings, and review the https://docs.newrelic.com/docs/insights/event-data-sources/default-events/query-account-audit-logs-nrauditevent/[account audit logs (NrAuditEvent)^]. For more information, see https://docs.newrelic.com/docs/security/[Security and privacy^]. 
